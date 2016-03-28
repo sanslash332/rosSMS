@@ -8,39 +8,40 @@ from geometry_msgs.msg import Twist
 
 
 class Turtlebot_Wheels:
-    def __init__(self):
-    	self.odom_sub = rospy.Subscriber('/odom',Odometry,self.position_recv)
-    	self.nav_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist)
-    	self.rate = rospy.Rate(10)
-		self.posx
-		self.posy
-		self.ang
+	def __init__(self):
+		self.odom_sub = rospy.Subscriber('/odom',Odometry,self.position_recv)
+	    self.nav_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist)
+		rospy.init_node('Wheels', anonymous=True)	
+		self.rate = rospy.Rate(10)
+		self.posx = 0
+		self.posy = 0
+		self.ang = 0
 		self.Kpx = 0.1
-		self.Kpa = 0.2
+		self.Kpa = 1
         
 	def position_recv(self, data):
 		pos = data.pose.pose.position
 		quat = data.pose.pose.orientation
 		self.posx = pos.x
 		self.posy = pos.y
-		self.ang = tf.transformations.euler_from_quaternion(quat)[2] # Transforma de quaterniones a angulos. El ángulo en yaw es el que interesa
+		self.ang = euler_from_quaternion([quat.x, quat.y, quat.z, quat.w])[2]
 
-	def move_straight(self, distance, vel): # Mueve el robot una distancia en linea recta a una velocidad, leyendo de odom la pos
+	def move_straight(self, distance, vel):
 		data = Twist()
-		posx_init = self.posx #Guarda la posición actual como incial
+		posx_init = self.posx 
 		posy_init = self.posy
 		dist = 0
 		data.linear.x = vel
 		while(dist < distance):
 			x = self.posx - posx_init
 			y = self.posy - posy_init	
-			dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2)) # Como la orientación cambia, para avanzar en linea recta que vaya calculando 
-			self.nav_pub.publish(data) 						  # la distancia en línea recta entre los puntos de origen y actual
-			rate.sleep()
+			dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2)) 
+			self.nav_pub.publish(data) 			
+			self.rate.sleep()
 		data = Twist()		
 		self.nav_pub.publish(data)
 		
-	def move_rotate(self, angle, vel): #La misma idea pero con ángulo
+	def move_rotate(self, angle, vel): 
 		data = Twist()
 		ang_init = self.ang
 		ang = 0
@@ -48,11 +49,11 @@ class Turtlebot_Wheels:
 		while(ang < angle):
 			self.nav_pub.publish(data)
 			ang = self.ang - ang_init
-			rate.sleep()
+			self.rate.sleep()
 		data = Twist()		
 		self.nav_pub.publish(data)
 
-	def move_straight2(self, distance): #Los dos siguientes métodos usan un control proporcional, es para empezar con algo
+	def move_straight2(self, distance):
 		data = Twist()
 		posx_init = self.posx
 		posy_init = self.posy
@@ -61,24 +62,36 @@ class Turtlebot_Wheels:
 			x = self.posx - posx_init
 			y = self.posy - posy_init
 			dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2))
-			velx = self.kp * dist
-			if(vel > 0.5)
+			velx = self.kp * (distance - dist)
+			if(vel > 0.5):
 				vel = 0.5
 			data.linear.x = vel
 			self.nav_pub.publish(data)
-			rate.sleep()
+			self.rate.sleep()
 		data = Twist()		
 		self.nav_pub.publish(data)
 
 	def move_rotate2(self, angle):
 		data = Twist()
 		ang_init = self.ang
-		ang = 0
-		while(ang < angle):
+		angA = 0
+		while(angA < angle):
+			angA = self.ang - ang_init
+			rospy.loginfo("AngA is" + str(angA))
+			vel = self.Kpa*(angle - angA)
+			rospy.loginfo("Vel is" + str(vel))
+			data.angular.z = vel
 			self.nav_pub.publish(data)
-			ang = self.ang - ang_init
-			vel = self.Kpa*ang
-			rate.sleep()
+			self.rate.sleep()
 		data = Twist()		
 		self.nav_pub.publish(data)
+def main():
+	TBW = Turtlebot_Wheels()
+	TBW.move_rotate2(math.pi/2)
+	rospy.spin()
 
+if __name__ == '__main__':
+	try:
+		main()
+	except rospy.ROSInterruptException:
+		pass
