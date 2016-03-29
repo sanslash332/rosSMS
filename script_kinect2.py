@@ -14,7 +14,8 @@ from sensor_msgs.msg import Image
 
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
-
+# roslaunch openni_launch openni.launch
+# rosrun image_view miage_view image:=/camera/rgb/image_color
 class Turtlebot_Kinect(object):
 	def __init__(self):
 		self.__depth_img = rospy.Subscriber('/camera/depth/image',Image ,self.__depth_handler)
