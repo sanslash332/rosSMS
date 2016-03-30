@@ -11,6 +11,7 @@ from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
+import time
 
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
@@ -30,24 +31,27 @@ class Turtlebot_Kinect(object):
 		self.rate = rospy.Rate(10)
 		self.odom_sub = rospy.Subscriber('/odom',Odometry,self.position_recv)
 	    	self.nav_pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist)
+		self.al_dif = 0
 		self.alineado = 0
+		self.ang = 0
+		self.alinear()
 	def __depth_handler(self, data):
 		try:
 			self.current_cv_depth_image = numpy.asarray(self.bridge.imgmsg_to_cv(data,"32FC1"))[:,:540]
 			D = self.current_cv_depth_image
-			cv2.imshow("image_depth", self.current_cv_depth_image)
-			cv2.waitKey(10)
 			#rospy.loginfo("imagen depth recibida " + str(self.current_cv_depth_image.shape))
 			D2 = numpy.ma.masked_array(D, numpy.isnan(D))
-			cv2.imshow("image_depth", D2)
-			cv2.waitKey(10)
+			#cv2.imshow("image_depth", D2)
+			#cv2.waitKey(10)
 			banda1 = D2[230:250, :];
 			dists1 = banda1.mean(0);
-			#rospy.loginfo("dm1 " + str(dM1))
-			#rospy.loginfo("dm2 " + str(dM2))
-			#rospy.loginfo("dm3 " + str(dM3))
-			#rospy.loginfo("dists1 size: " + str(dists1))
-			
+			a1 = numpy.mean(banda1[:,220:270])
+			a2 = numpy.mean(banda1[:,370:420])
+			self.al_dif = a2-a1
+			rospy.loginfo(self.al_dif)
+			if(numpy.mean(dists1) < 0.5):
+				self.alinear()
+				self.move_rotate(math.pi/2, 1.2)			
 			self.stopSignal = 0
 			#if(numpy.any(dists1<0.5)):
 				#self.stopSignal = 1
@@ -76,11 +80,18 @@ class Turtlebot_Kinect(object):
 		data = Twist()		
 		self.nav_pub.publish(data)
 	def alinear(self):
-		while(self.alineado==0):
-			d = self.dists1
-			imin = numpy.argmin(d, axis=1)
-			rospy.loginfo(str(imin))
-			
+		while(abs(self.al_dif) > 0.03):
+			data = Twist()
+			vel = 100*self.al_dif
+			if(vel > 2):
+				vel = 2
+			elif(vel < -2):
+				vel = -2
+			data.angular.z = vel
+			self.nav_pub.publish(data)
+		data = Twist()		
+		self.nav_pub.publish(data)
+		time.sleep(1)		
 	def move(self):
 		while(1):
 			if(self.stopSignal==1):
