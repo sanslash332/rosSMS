@@ -17,7 +17,7 @@ class Turtlebot_Wheels:
 		self.posy = 0
 		self.ang = 0
 		self.Kpx = 0.1
-		self.Kpa = 1
+		self.Kpa = 0.2
         
 	def position_recv(self, data):
 		pos = data.pose.pose.position
@@ -62,7 +62,7 @@ class Turtlebot_Wheels:
 			x = self.posx - posx_init
 			y = self.posy - posy_init
 			dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2))
-			velx = self.kp * (distance - dist)
+			velx = self.kp * dist
 			if(vel > 0.5):
 				vel = 0.5
 			data.linear.x = vel
