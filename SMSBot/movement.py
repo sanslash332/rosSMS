@@ -23,6 +23,7 @@ class MovementManager(object):
         self._position = None
         self._orientation=None
         self._angle=0
+        self.kpx=0.1
 
     def callback(self, data):
         self._odomData=data
@@ -33,6 +34,36 @@ class MovementManager(object):
         
     def setVel(self, data):
         self._navPub.publish(data)
+
+    def moveStraight(self, distance, vel, brakeHelp=False):
+        data = Twist()
+        posxInit =self._position.x
+        posyInit = self._position.y
+        dist=0
+        
+        while(dist< distance):
+            x = self._position.x - posxInit
+            y= self._position.y-posyInit
+            dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2))
+            velx=vel
+            if brakeHelp:
+                velx = self.kp * (distance - dist)
+                if velx > vel:
+                    velx=vel
+
+
+
+
+            data.linear.x = velx
+            self.setVel(data)
+            self.rate.sleep()
+        data=Twist()
+        self.setVel(data)
+
+
+
+
+
 
 
     def moveRotate(self, angle, vel): 
