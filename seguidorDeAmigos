@@ -1,0 +1,16 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
+import rospy
+import roslib
+import numpy
+from SMSBot.robot import Robot
+
+def main():
+  tortuga = new Robot()
+  tortuga.movement.moveStraight(1,0.1)
+
+if __name__ == '__main__':
+  try:
+		main()
+	except rospy.ROSInterruptException:
+		pass
