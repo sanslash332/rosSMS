@@ -7,7 +7,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
-from SMSBot.PID import PID
+from SMSBot.PID import PIDController
 
 
 class MovementManager(object):
