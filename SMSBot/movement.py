@@ -7,6 +7,8 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
+from SMSBot.PID import PIDController
+from SMSBot.kinect import KinectManager
 
 
 class MovementManager(object):
@@ -35,13 +37,19 @@ class MovementManager(object):
     def setVel(self, data):
         self._navPub.publish(data)
 
-    def moveStraight(self, distance, vel, brakeHelp=False):
+    def moveStraight(self, distance, vel, brakeHelp=False, obstacleDetect=False, obsThreshold = 0.5):
         data = Twist()
         posxInit =self._position.x
         posyInit = self._position.y
         dist=0
         
+        kinect = KinectManager
+        
         while(dist< distance):
+            
+            if kinect.obstacleInFront(obsThreshold):
+            	break
+            
             x = self._position.x - posxInit
             y = self._position.y - posyInit
             dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2))
