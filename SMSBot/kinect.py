@@ -6,7 +6,7 @@ import numpy
 
 
 class KinectManager(object):
-    """ clase que maneja todo lo referente a la c·mara, el kinect e im·genes"""
+    """ clase que maneja todo lo referente a la c√°mara, el kinect e im√°genes"""
 	def __init__(self):
        		rospy.init_node('/SMSBot/Kinect', anonymous=True)
 		self.__depth_img = rospy.Subscriber('/camera/depth/image',Image ,self.depth_handler)
@@ -36,7 +36,8 @@ class KinectManager(object):
 		    
 		except CvBridgeError, e:
 		    print e
-	def isWall(self)
+	
+	def isWall(self):
 		R = self.current_cv_rgb_image
 		D = self.current_cv_depth_image
 		"""Aca yo veria si es que en un sector mas o menos grande, por ejemplo R[100:400, 150:350], es del mismo color	"""
@@ -45,7 +46,8 @@ class KinectManager(object):
 		if(numpy.mean(dist) < 0.7):
 			return 1			
 		return 0
-	def getAlignment(self)
+	
+	def getAlignment(self):
 		D = self.current_cv_depth_image
 		"""Ve dos puntos de una pared y entrega la diferencia"""
 		banda = D2[100:350, :];
