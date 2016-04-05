@@ -8,8 +8,11 @@ from SMSBot.robot import Robot
 def main():
  	tortuga = new Robot()
  	tortuga.movement.moveStraight(1,0.1)
+ 	spinPID = new robot.PIDController(0.1,0.1,0.1)
  	while True:
  		targetX = detectarObjecto(tortuga) 
+ 		centerX = 270 
+ 		v = spinPID.calc_PID(targetX-centerX)
  		
  	
 
