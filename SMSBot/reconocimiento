@@ -44,9 +44,6 @@ class Target:
         threshold_img1a = cv.CreateImage(cv.GetSize(hsv_img), 8, 1)
         threshold_img2 = cv.CreateImage(cv.GetSize(hsv_img), 8, 1)
         i = 0
-        writer = cv.CreateVideoWriter("angle_tracking.avi", cv.CV_FOURCC('M', 'J', 'P', 'G'), 30, cv.GetSize(hsv_img),
-                                      1)
-        print ("Start")
 
         while True:
             # print ser.readline()
