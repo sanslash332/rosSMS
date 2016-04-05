@@ -115,7 +115,20 @@ class MovementManager(object):
 		data = Twist()		
 		self.setVel(data)
 
-
+    def alinear(kinect)
+	a = kinect.getAlignment()
+	while(abs(a) > 0.03):
+			a = kinect.getAlignment()
+			data = Twist()
+			vel = 100*self.al_dif
+			if(vel > 2):
+				vel = 2
+			elif(vel < -2):
+				vel = -2
+			data.angular.z = vel
+			self.nav_pub.publish(data)
+		data = Twist()		
+		self.nav_pub.publish(data)
     def getPosition(self):
         return(self._position)
 
