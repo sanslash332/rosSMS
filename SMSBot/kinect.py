@@ -37,11 +37,20 @@ class KinectManager(object):
 		except CvBridgeError, e:
 		    print e
 	
+	def obstacleInFront(self, threshold):
+		D = self.current_cv_depth_image
+		banda = D[230:250, :]
+		dists = banda1.mean(0);
+		if(numpy.any(dists<threshold)):
+			return 1
+			rospy.loginfo("STOP!!")
+		return 0
+	
 	def isWall(self):
 		R = self.current_cv_rgb_image
 		D = self.current_cv_depth_image
 		"""Aca yo veria si es que en un sector mas o menos grande, por ejemplo R[100:400, 150:350], es del mismo color	"""
-		banda = D2[100:350, :];
+		banda = D2[100:350, :]
 		dist = banda1.mean(0);
 		if(numpy.mean(dist) < 0.7):
 			return 1			
@@ -50,7 +59,7 @@ class KinectManager(object):
 	def getAlignment(self):
 		D = self.current_cv_depth_image
 		"""Ve dos puntos de una pared y entrega la diferencia"""
-		banda = D2[100:350, :];
+		banda = D[100:350, :];
 		a1 = numpy.mean(banda[:,220:270])
 		a2 = numpy.mean(banda[:,370:420])
 		return a2-a1
