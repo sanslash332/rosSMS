@@ -63,3 +63,9 @@ class KinectManager(object):
 		a1 = numpy.mean(banda[:,220:270])
 		a2 = numpy.mean(banda[:,370:420])
 		return a2-a1
+		
+	def getRgbImage(self):
+		return self.__rgb_img
+		
+	def getDepthImage(self):
+		return self.__depth_img
