@@ -4,7 +4,7 @@ import rospy
 import roslib
 import numpy
 
-class PID(object):
+class PIDController(object):
     """ Clase para utilizar controladores del tipo PID"""
 
     def __init__(self, Kp, Ki, Kd):
