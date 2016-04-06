@@ -18,12 +18,18 @@ def main():
  		centerX = 320
 		dif = centerX - targetX	 
 		dist = tortuga.kinect.getDistance(targetX, targetY)
-		rospy.loginfo("distancia = " + str(dist) + "dif = " + str(dif))
 		if(dist > 0 and abs(dif) > 0):
 			velx = 0.2*(dist-0.6)
+			if(dist < 0.8):
+				t=0
+			if(t<1):
+				t+=0.1
+				if(velx > 0.3*t):
+					velx = 0.3*t
 			tortuga.movement.setVelX(velx)
 			vela = 0.02* (dif)
 			tortuga.movement.setVelA(vela)
+			rospy.loginfo("dist = " + str(dist) + "dif = " + str(dif) + "vela = " + str(vela) + "velx = " + str(velx))
 			r.sleep()
 
 		"""if(abs(dif) < 30 and dist > 0 and abs(dif) > 0):

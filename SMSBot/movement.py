@@ -24,6 +24,7 @@ class MovementManager(object):
         self.odomSub = rospy.Subscriber('/odom',Odometry,self.callback)
         self._navPub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist)
         self._odomData = Odometry()
+	self._vel = Twist()
         self._posX = 0
 	self._posY = 0
         self._orientation = None
@@ -43,23 +44,21 @@ class MovementManager(object):
     def setVel(self, data):
         self._navPub.publish(data)
     def setVelA(self, vel):
-	data = Twist()
 	vela = vel
 	if(vel > 2):
 		vela = 2
 	elif(vel < -2):
 		vela = -2
-	data.angular.z = vela
-        self._navPub.publish(data)
+	self._vel.angular.z = vela
+        self._navPub.publish(self._vel)
     def setVelX(self, vel):
-	data = Twist()
 	velx = vel
 	if(vel > 0.5):
 		velx = 0.5
 	elif(vel < -0.5):
 		velx = -0.5
-	data.linear.x = velx
-        self._navPub.publish(data)
+	self._vel.linear.x = velx
+        self._navPub.publish(self._vel)
     def stop(self):
 	data = Twist()
         self._navPub.publish(data)
