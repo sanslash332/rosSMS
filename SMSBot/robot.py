@@ -3,12 +3,13 @@
 import rospy
 import roslib
 import numpy
-from SMSBot.movement import MovementManager
-from SMSBot.kinect import KinectManager
+from movement import MovementManager
+from kinect import KinectManager
 
 class Robot(object):
     """ Clase contenedora que representa al robot en sí mismo, y contiene todos los manejadores y partes que utilizaremos de él para manipularlo. Kinect, movimiento, sonido, etc"""
 
     def __init__(self):
-        self.movement = MovementManager()
+	rospy.init_node('TurtleBot', anonymous=True)        
+	self.movement = MovementManager()
         self.kinect = KinectManager()
