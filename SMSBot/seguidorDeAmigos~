@@ -1,0 +1,66 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
+import rospy
+import roslib
+import numpy
+import cv2
+from robot import Robot
+from PID import PIDController
+
+def main():
+ 	tortuga = Robot()
+ 	tortuga.movement.moveStraight(1,0.1)
+ 	#spinPID = PIDController(0.1,0.1,0.1)
+ 	#while True:
+		#detectarObjecto(tortuga) 		
+		#targetX = detectarObjecto(tortuga) 
+ 		#centerX = 270 
+ 		#v = spinPID.calc_PID(targetX-centerX)
+ 		
+ 	
+
+if __name__ == '__main__':
+	try:
+		main()
+	except rospy.ROSInterruptException:
+		pass
+	
+def detectarObjecto(robot):
+	kinect = robot.KinectManager()
+	
+	#get image
+	img = kinect.getRgbImage()
+        '''
+        # convert the image to HSV
+        hsv_img = cv.CreateImage(cv.GetSize(img, 8, 3)
+        cv.CvtColor(img, hsv_img, cv.CV_BGR2HSV)
+        
+        threshold_img1 = cv2.CreateImage(cv.GetSize(hsv_img), 8, 1)
+        threshold_img1a = cv2.CreateImage(cv.GetSize(hsv_img), 8, 1)
+        
+        # apply thresholds
+        cv.InRangeS(hsv_img, (165, 155, 110), (250, 200, 150), threshold_img1)  # red
+        cv.InRangeS(hsv_img, (0, 155, 110), (10, 200, 150), threshold_img1a)  # red again
+        cv.InRangeS(hsv_img, (160, 100, 100), (179, 255, 255), threshold_img1)  # otro red
+        cv.Add(threshold_img1, threshold_img1a, threshold_img1)  # this is combining the two limits for red
+        
+	# determine the moments of the two objects
+	threshold_img1 = cv.GetMat(threshold_img1)
+	moments1 = cv.Moments(threshold_img1, 0)
+	area1 = cv.GetCentralMoment(moments1, 0, 0)
+	
+        # there can be noise in the video so ignore objects with small areas
+        if (area1 > 20000):
+	        # x and y coordinates of the center of the object is found by dividing the 1,0 and 0,1 moments by the area
+	        x1 = int(cv.GetSpatialMoment(moments1, 1, 0) / area1)
+	        y1 = int(cv.GetSpatialMoment(moments1, 0, 1) / area1)
+
+	        # draw circle
+	        cv.Circle(img, (x1, y1), 2, (0, 255, 0), 20)
+	
+	cv2.imshow("Object", threshold_img1)
+	cv2.imshow("Target", img)
+	'''        
+	#return 10	
+	#return x1
+        
