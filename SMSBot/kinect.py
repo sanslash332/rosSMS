@@ -53,7 +53,7 @@ class KinectManager(object):
 			rospy.loginfo("STOP!!")
 		return 0
 	
-	def isWall(self):
+	def hayPared(self):
 		R = self.current_cv_rgb_image
 		D = self.current_cv_depth_image
 		"""Aca yo veria si es que en un sector mas o menos grande, por ejemplo R[100:400, 150:350], es del mismo color	"""
@@ -62,11 +62,17 @@ class KinectManager(object):
 		if(numpy.mean(dist) < 0.7):
 			return 1			
 		return 0
-	
+	def getSideAlignment(self):
+		D = self.current_cv_depth_image
+		"""Ve dos de los lados y entrega la diferencia"""
+		banda = D[230:250, :];
+		a1 = numpy.mean(banda[:,110:130])
+		a2 = numpy.mean(banda[:,510:530])
+		return a2-a1
 	def getAlignment(self):
 		D = self.current_cv_depth_image
 		"""Ve dos puntos de una pared y entrega la diferencia"""
-		banda = D[100:350, :];
+		banda = D[230:250, :];
 		a1 = numpy.mean(banda[:,220:270])
 		a2 = numpy.mean(banda[:,370:420])
 		return a2-a1
