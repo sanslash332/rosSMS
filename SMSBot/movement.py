@@ -99,27 +99,27 @@ class MovementManager(object):
 
 
     def moveRotate(self, angle, vel, brakeHelp=False): 
-        data = Twist()
+	self.rate.sleep()        
+	data = Twist()
         angInit = self._angle
         ang2 = 0
 	vela = vel
 	if(angle < 0):
 	    vela = -vel
 	if(angle > 0):
-		while(ang2 < angle):
+		while(ang2 < angle*0.8):
 		    ang3 = self._angle
 		    if ang3<0 and angInit>0:
 		        ang3 = self._angle + 2*math.pi
 
 		    ang2 = ang3 - angInit
-
 		    if brakeHelp:
 		        vela = self.kpa * (angle - ang2)
 		        if vela > vel:
 		            vela=vel
 
-		    if abs(ang2) < 0.35: #Hace que la partida sea mas suave
-			vela = 4 * ang2 - 0.05
+		    #if abs(ang2) < 0.35: #Hace que la partida sea mas suave
+			#vela = 4 * ang2 - 0.05
 
 		    data.angular.z = vela
 		    self.setVel(data)

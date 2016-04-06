@@ -7,8 +7,6 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
-from SMSBot.PID import PIDController
-from SMSBot.kinect import KinectManager
 from sound_play.msg import SoundRequest
 
 
@@ -16,7 +14,7 @@ class SoundManager(object):
     """ Clase que controla y maneja la administración del sonido """
 
     def __init__(self):
-        rospy.init_node('/SMSBot/SoundManager', anonymous=True)
+        
         self._soundPub = rospy.Publisher('robotsound', SoundRequest)
         self.say("Sound started")
 

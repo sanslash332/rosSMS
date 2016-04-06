@@ -5,21 +5,20 @@ import roslib
 import numpy
 import math
 import cv2
-from robot import Robot
-from PID import PIDController
-
+from SMSBot.robot import Robot
 def main():
  	tortuga = Robot()
         r = rospy.Rate(10)
- 	#spinPID = PIDController(0.1,0.1,0.1)
 	t = 0
+	while (tortuga.kinect.getDepthImage().shape == (1,1,3)):
+		rospy.loginfo("cargando kinect")
  	while True:
 		(targetX, targetY) = tortuga.kinect.detectarObjeto() 	
  		centerX = 320
 		dif = centerX - targetX	 
 		dist = tortuga.kinect.getDistance(targetX, targetY)
 		if(dist > 0 and abs(dif) > 0):
-			velx = 0.2*(dist-0.6)
+			velx = 0.5*(dist-0.8)
 			if(dist < 0.8):
 				t=0
 			if(t<1):

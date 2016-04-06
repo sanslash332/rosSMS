@@ -53,28 +53,30 @@ class KinectManager(object):
 			rospy.loginfo("STOP!!")
 		return 0
 	
-	def hayPared(self):
-		R = self.current_cv_rgb_image
+	def hayPared(self,distancia_pared):		
 		D = self.current_cv_depth_image
 		"""Aca yo veria si es que en un sector mas o menos grande, por ejemplo R[100:400, 150:350], es del mismo color	"""
-		banda = D2[100:350, :]
-		dist = banda1.mean(0);
-		if(numpy.mean(dist) < 0.7):
+		banda = D[250:420, :]
+		dist = banda.mean(0);
+		#rospy.loginfo(str(dist))
+		rospy.loginfo(str(numpy.mean(dist)))
+		if(numpy.mean(dist) < distancia_pared):
 			return 1			
 		return 0
 	def getSideAlignment(self):
 		D = self.current_cv_depth_image
 		"""Ve dos de los lados y entrega la diferencia"""
 		banda = D[230:250, :];
-		a1 = numpy.mean(banda[:,110:130])
-		a2 = numpy.mean(banda[:,510:530])
+		a1 = numpy.mean(banda[:,100:120])
+		a2 = numpy.mean(banda[:,520:540])
 		return a2-a1
 	def getAlignment(self):
 		D = self.current_cv_depth_image
 		"""Ve dos puntos de una pared y entrega la diferencia"""
 		banda = D[230:250, :];
-		a1 = numpy.mean(banda[:,220:270])
+		a1 = numpy.mean(banda[:,250:300])
 		a2 = numpy.mean(banda[:,370:420])
+		#rospy.loginfo(str(numpy.mean(a2-a1)))
 		return a2-a1
 	
 	def showDepthImage(self):
@@ -86,12 +88,17 @@ class KinectManager(object):
 		
 	def getDepthImage(self):
 		return self.current_cv_depth_image
+
 	def getDistance(self, x, y):
 		D = self.current_cv_depth_image
+		#rospy.loginfo(str(self.current_cv_rgb_image.shape))
+		#cv2.imshow("Depth", D)
+		#cv2.waitKey(10)
 		try:
-			return numpy.mean(D[x-5:x+5,y-5:y+5])
+			return np.mean(D[y-5:y+5,x-5:x+5])
 		except:
 			return 0
+
 	def detectarObjeto(self):
 	
 		img = self.current_cv_rgb_image
