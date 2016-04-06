@@ -28,6 +28,7 @@ def main():
 		time.sleep(1)
 		tortuga.movement.moveRotate(math.pi/2, vela, brakeHelp=True): 
 		counter++
+	tortuga.movement.stop()
  	
 
 if __name__ == '__main__':
