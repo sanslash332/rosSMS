@@ -3,16 +3,19 @@
 import rospy
 import roslib
 import numpy
-from SMSBot.robot import Robot
+import cv2
+from robot import Robot
+from PID import PIDController
 
 def main():
- 	tortuga = new Robot()
+ 	tortuga = Robot()
  	tortuga.movement.moveStraight(1,0.1)
- 	spinPID = new robot.PIDController(0.1,0.1,0.1)
- 	while True:
- 		targetX = detectarObjecto(tortuga) 
- 		centerX = 270 
- 		v = spinPID.calc_PID(targetX-centerX)
+ 	#spinPID = PIDController(0.1,0.1,0.1)
+ 	#while True:
+		#detectarObjecto(tortuga) 		
+		#targetX = detectarObjecto(tortuga) 
+ 		#centerX = 270 
+ 		#v = spinPID.calc_PID(targetX-centerX)
  		
  	
 
@@ -27,13 +30,13 @@ def detectarObjecto(robot):
 	
 	#get image
 	img = kinect.getRgbImage()
-        
+        '''
         # convert the image to HSV
         hsv_img = cv.CreateImage(cv.GetSize(img, 8, 3)
         cv.CvtColor(img, hsv_img, cv.CV_BGR2HSV)
         
-        threshold_img1 = cv.CreateImage(cv.GetSize(hsv_img), 8, 1)
-        threshold_img1a = cv.CreateImage(cv.GetSize(hsv_img), 8, 1)
+        threshold_img1 = cv2.CreateImage(cv.GetSize(hsv_img), 8, 1)
+        threshold_img1a = cv2.CreateImage(cv.GetSize(hsv_img), 8, 1)
         
         # apply thresholds
         cv.InRangeS(hsv_img, (165, 155, 110), (250, 200, 150), threshold_img1)  # red
@@ -57,6 +60,7 @@ def detectarObjecto(robot):
 	
 	cv2.imshow("Object", threshold_img1)
 	cv2.imshow("Target", img)
-	        
-	return x1
+	'''        
+	#return 10	
+	#return x1
         
