@@ -17,6 +17,15 @@ class SoundManager(object):
         
         self._soundPub = rospy.Publisher('robotsound', SoundRequest)
         self.say("Sound started")
+    def playBuiltSound(self, snd):
+        s = SoundRequest()
+        s.sound = snd
+        s.command = s.PLAY_ONCE
+        
+        self._soundPub.publish(s)
+
+
+
 
 
     def playSound(self, snd):

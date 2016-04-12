@@ -9,8 +9,7 @@ from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
-from PID import PIDController
-from kinect import KinectManager
+from SMSBot.PID import PIDController
 
 
 class MovementManager(object):
@@ -24,19 +23,21 @@ class MovementManager(object):
         self.odomSub = rospy.Subscriber('/odom',Odometry,self.callback)
         self._navPub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist)
         self._odomData = Odometry()
-	self._vel = Twist()
+        self._vel = Twist()
+        self.position= None
         self._posX = 0
-	self._posY = 0
+        self._posY = 0
         self._orientation = None
         self._angle=0
         self.kpx=0.1
-	self.kpa=0.1
+        self.kpa=0.1
 
     def callback(self, data):
         self._odomData=data
         position=data.pose.pose.position
-	self._posX = position.x
-	self._posY = position.y
+        self._posX = position.x
+        self._posY = position.y
+        self.position = position
         self._orientation=data.pose.pose.orientation
         self._angle= euler_from_quaternion([self._orientation.x, self._orientation.y, self._orientation.z, self._orientation.w])[2]
 
@@ -60,93 +61,9 @@ class MovementManager(object):
 	self._vel.linear.x = velx
         self._navPub.publish(self._vel)
     def stop(self):
-	data = Twist()
+        data = Twist()
         self._navPub.publish(data)
 
-    def moveStraight(self, distance, vel, brakeHelp=False, obstacleDetect=False, obsThreshold = 0.5):
-
-	self.rate.sleep()
-        posxInit = self._posX
-        posyInit = self._posY
-        dist=0
-        
-        kinect = KinectManager()
-        
-        while(dist< distance):           
-            if obstacleDetect and kinect.obstacleInFront(obsThreshold):
-            	break
-            x = self._posX - posxInit
-            y = self._posY - posyInit
-            dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2))
-	    rospy.loginfo("distancia: " + str(dist))
-            velx=vel
-            if brakeHelp:
-                velx = self.kpx * (distance - dist)
-                if velx > vel:
-                    velx=vel
-	    #if dist < 0.4: #Hace que la partida sea mas suave
-		#velx = dist 
-
-
-	    data = Twist()
-            data.linear.x = velx
-            self.setVel(data)
-            self.rate.sleep()
-
-        data=Twist()
-        self.setVel(data)
-	self.rate.sleep()
-
-
-    def moveRotate(self, angle, vel, brakeHelp=False): 
-	self.rate.sleep()        
-	data = Twist()
-        angInit = self._angle
-        ang2 = 0
-	vela = vel
-	if(angle < 0):
-	    vela = -vel
-	if(angle > 0):
-		while(ang2 < angle*0.8):
-		    ang3 = self._angle
-		    if ang3<0 and angInit>0:
-		        ang3 = self._angle + 2*math.pi
-
-		    ang2 = ang3 - angInit
-		    if brakeHelp:
-		        vela = self.kpa * (angle - ang2)
-		        if vela > vel:
-		            vela=vel
-
-		    #if abs(ang2) < 0.35: #Hace que la partida sea mas suave
-			#vela = 4 * ang2 - 0.05
-
-		    data.angular.z = vela
-		    self.setVel(data)
-		    self.rate.sleep()
-		data = Twist()		
-		self.setVel(data)
-	else:
-		while(ang2 > angle):
-		    ang3 = self._angle
-		    if ang3>0 and angInit<0:
-		        ang3 = self._angle - 2*math.pi
-
-		    ang2 = ang3 - angInit
-
-		    if brakeHelp:
-		        vela = self.kpa * (angle - ang2)
-		        if vela > vel:
-		            vela=vel
-
-		    if abs(ang2) < 0.35: #Hace que la partida sea mas suave
-			vela = 4 * ang2 + 0.05
-
-		    data.angular.z = vela
-		    self.setVel(data)
-		    self.rate.sleep()
-		data = Twist()		
-		self.setVel(data)
     def getPosition(self):
         return(self._position)
 
