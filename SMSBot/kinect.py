@@ -12,7 +12,7 @@ from cv_bridge import CvBridge, CvBridgeError
 
 
 class KinectManager(object):
-        """ clase que maneja todo lo referente a la cámara, el kinect e imágenes"""
+    """ clase que maneja todo lo referente a la cámara, el kinect e imágenes"""
     def __init__(self):
                #rospy.init_node('TurtleBot_Kinect', anonymous=True)
         self.__depth_img = rospy.Subscriber('/camera/depth/image',Image ,self.depth_handler)
@@ -122,7 +122,7 @@ class KinectManager(object):
         if (area1 > 20000):
             # x and y coordinates of the center of the object is found by dividing the 1,0 and 0,1 moments by the area
             x1 = int(M['m10']/M['m00'])
-                y1 = int(M['m01']/M['m00'])
+            y1 = int(M['m01']/M['m00'])
 
             # draw circle
             cv2.circle(img, (x1, y1), 2, (0, 255, 0), 20)

@@ -3,6 +3,7 @@
 import rospy
 import roslib
 import numpy
+import math
 from SMSBot.movement import MovementManager
 from SMSBot.kinect import KinectManager
 from SMSBot.sound import SoundManager
@@ -38,7 +39,7 @@ class Robot(object):
             x = self.movement.position.x - posxInit
             y = self.movement.position.y - posyInit
             dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2))
-        rospy.loginfo("distancia: " + str(dist))
+            rospy.loginfo("distancia: " + str(dist))
             velx=vel
             if brakeHelp:
                 velx = self.kpx * (distance - dist)
@@ -55,11 +56,11 @@ class Robot(object):
 
         data=Twist()
         self.movement.setVel(data)
-        self.rate.sleep()
+        self.movement.rate.sleep()
 
 
     def moveRotate(self, angle, vel, brakeHelp=False): 
-        self.rate.sleep()        
+        self.movement.rate.sleep()        
         data = Twist()
         angInit = self.movement.getRadianAngle()
 
@@ -71,7 +72,7 @@ class Robot(object):
             while(ang2 < angle*0.8):
                 ang3 = self.movement.getRadianAngle()
                 if ang3<0 and angInit>0:
-                    ang3 = self._angle + 2*math.pi
+                    ang3 = self.movement.getRadianAngle() + 2*math.pi
 
                 ang2 = ang3 - angInit
                 if brakeHelp:
@@ -84,14 +85,14 @@ class Robot(object):
 
                 data.angular.z = vela
                 self.movement.setVel(data)
-                self.rate.sleep()
+                self.movement.rate.sleep()
             data = Twist()		
-            self.setVel(data)
+            self.movement.setVel(data)
         else:
             while(ang2 > angle):
                 ang3 = self._angle
                 if ang3>0 and angInit<0:
-                    ang3 = self._angle - 2*math.pi
+                    ang3 = self.movement.getRadianAngle() - 2*math.pi
 
                 ang2 = ang3 - angInit
 
