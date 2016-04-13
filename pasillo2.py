@@ -39,11 +39,12 @@ def main():
 	while(dist > 0.5):
 		dist = tortuga.kinect.getDistance(centerX, centerY)
 		a = tortuga.kinect.getSideAlignment()
-		velx = 0.25*(dist-0.5)
+		velx = 0.5*(dist-0.5)
 		tortuga.movement.setVelX(velx)
 		vela = -2 * a
 		if(dist < 0.8):
-			vela = -10 * (a-0.02)
+			a = tortuga.kinect.getAlignment()
+			vela = 2 * a
 		tortuga.movement.setVelA(vela)
 		img = tortuga.kinect.getDepthImage()		
 		rospy.loginfo("side alignment = " + str(a))

@@ -25,8 +25,8 @@ def ir(distancia, vel, data):
 	posx_init = posx		
 def talker():
 
-	pub = rospy.Publisher('/cmd_vel_mux/input/navi', Twist)
-	sub = rospy.Subscriber('/odom',Odometry, callback)
+	pub = rospy.Publisher('/turtlebot/cmd_vel', Twist)
+	sub = rospy.Subscriber('turtlebot/odom',Odometry, callback)
 	rospy.init_node('talker2', anonymous=True)
 	rate = rospy.Rate(10) # 10hz
 	
