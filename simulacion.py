@@ -3,12 +3,12 @@ from SMSBot.robot_simulacion import RobotMaze
 from busqueda.mapa import Mapa
 
 def main():
-	tortuga = RobotMaze('e')
-	#m = Mapa("c.txt")
-	#pasos = m.solveMap()
-	pasos = ['e', 'e', 'e', 'n', 'w', 'w', 'w', 'n', 'n', 'e', 'e']
+	tortuga = RobotMaze('n')
+	m = Mapa("c2.txt")
+	pasos = m.solveMap()
 	for p in pasos:
-		tortuga.move(p)
+		rospy.loginfo(p)
+		#tortuga.move(p)
 
 if __name__ == '__main__':
 	try:

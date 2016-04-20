@@ -29,14 +29,15 @@ class Mapa(object):
         goaldetect = False
         print(" cargando archivo ")
         for l in arch:
+            l = l[:-1]
             data = l.split(' ')
             #print(l)
 
-            if l[:-1]== "START":
+            if l== "START":
                 #print("start detectado")
                 startdetect =True
                 walldetect=False
-            elif l[:-1]=="GOAL":
+            elif l=="GOAL":
                 #print("goal detectado")
                 goaldetect= True
                 startdetect=False
@@ -115,7 +116,7 @@ class Mapa(object):
 
                     y = int(data[0])
                     x = int(data[1])
-                    direction = data[2][:-1]
+                    direction = data[2]
                     print("final detectado en %i, %i, con dirección %s " %(x,y, direction))
                     self.endDirection = direction
                     
@@ -190,15 +191,8 @@ class Mapa(object):
                     pathlist.append("s")
                 if celdas[x].east == celdas[x+1]:
                     pathlist.append("e")
+                    
 
-        if celdas[-1].north == ENDPOINT:
-            pathlist.append("n")
-        elif celdas[-1].west == ENDPOINT:
-            pathlist.append("w")
-        elif celdas[-1].south == ENDPOINT:
-            pathlist.append("s")
-        elif celdas[-1].east == ENDPOINT:
-            pathlist.append("e")
 
 
         return(pathlist)
