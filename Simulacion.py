@@ -1,6 +1,6 @@
 import rospy
 from SMSBot.robot_simulacion import RobotMaze
-#from mapa import Mapa
+from busqueda.mapa import Mapa
 
 def main():
 	tortuga = RobotMaze('e')
