@@ -18,13 +18,67 @@ from geometry_msgs.msg import Twist
 class Robot(object):
     """ Clase contenedora que representa al robot en sí mismo, y contiene todos los manejadores y partes que utilizaremos de él para manipularlo. Kinect, movimiento, sonido, etc"""
 
-    def __init__(self):
+    def __init__(self, orientacion):
         rospy.init_node('TurtleBot', anonymous=True)        
         self.movement = MovementManager()
         self.kinect = KinectManager()
         self.sound = SoundManager()
+	self.orientacionActual = orientacion
 
-
+    def moveMaze(self, ori):
+		if self.orientacionActual == 'n':
+			if ori == 'n':
+				self.moveStraight(0.8, 0.3)
+			elif ori == 'e':
+				self.moveRotate(-math.pi/2,1.5) 				
+				self.moveStraight(0.8, 0.3)
+			elif ori == 's':
+				self.moveRotate(math.pi/2,1.5)
+				self.moveRotate(math.pi/2,1.5)				
+				self.moveStraight(0.8, 0.3)
+			else:
+				self.moveRotate(math.pi/2,1.5)				
+				self.moveStraight(0.8, 0.3)
+		elif self.orientacionActual == 'w':
+			if ori == 'w':
+				self.moveStraight(0.8, 0.3)
+			elif ori == 'n':
+				self.moveRotate(-math.pi/2,1.5)				
+				self.moveStraight(0.8, 0.3)
+			elif ori == 'e':
+				self.moveRotate(math.pi/2,1.5)
+				self.moveRotate(math.pi/2,1.5)				
+				self.moveStraight(0.8, 0.3)
+			else:
+				self.moveRotate(math.pi/2,1.5)			
+				self.moveStraight(0.8, 0.3)
+		elif self.orientacionActual == 's':
+			if ori == 's':
+				self.moveStraight(0.8, 0.3)
+			elif ori == 'w':
+				self.moveRotate(-math.pi/2,1.5)				
+				self.moveStraight(0.8, 0.3)
+			elif ori == 'n':
+				self.moveRotate(math.pi/2,1.5)
+				self.moveRotate(math.pi/2,1.5)				
+				self.moveStraight(0.8, 0.3)
+			else:
+				self.moveRotate(math.pi/2,1.5)			
+				self.moveStraight(0.8, 0.3)
+		else:
+			if ori == 'e':
+				self.moveStraight(0.8, 0.3)
+			elif ori == 's':
+				self.moveRotate(-math.pi/2,1.5)				
+				self.moveStraight(0.8, 0.3)
+			elif ori == 'w':
+				self.moveRotate(math.pi/2,1.5)
+				self.moveRotate(math.pi/2,1.5)				
+				self.moveStraight(0.8, 0.3)
+			else:
+				self.moveRotate(math.pi/2,1.5)			
+				self.moveStraight(0.8, 0.3)
+		self.orientacionActual = ori
 
     def moveStraight(self, distance, vel, brakeHelp=False, obstacleDetect=False, obsThreshold = 0.5):
 

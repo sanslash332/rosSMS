@@ -93,6 +93,7 @@ class RobotMaze(object):
 			else:
 				self.moveRotate(math.pi/2,1.5)			
 				self.moveStraight(0.8, 0.3)
+		self.orientacionActual = ori
 
 	def moveRotate(self, angle, vel, brakeHelp=False): 
 		self.rate.sleep()        
@@ -104,7 +105,7 @@ class RobotMaze(object):
 		if(angle < 0):
 		    vela = -vel
 		if(angle > 0):
-		    while(ang2 < angle*0.94):
+		    while(ang2 < angle*0.935):
 		        ang3 = self.ang
 		        if ang3<0 and angInit>0:
 		            ang3 = self.ang + 2*math.pi
@@ -120,7 +121,7 @@ class RobotMaze(object):
 		    data = Twist()		
 		    self.setVel(data)
 		else:
-		    while(ang2 > angle*0.94):
+		    while(ang2 > angle*0.935):
 		        ang3 = self.ang
 		        if ang3>0 and angInit<0:
 		            ang3 = self.ang - 2*math.pi
@@ -151,7 +152,7 @@ class RobotMaze(object):
 		    x = self.posx - posxInit
 		    y = self.posy - posyInit
 		    dist = math.sqrt(math.pow(x, 2) + math.pow(y, 2))
-		    rospy.loginfo("distancia: " + str(dist))
+		    #rospy.loginfo("distancia: " + str(dist))
 		    velx=vel
 		    if brakeHelp:
 			velx = self.kpx * (distance - dist)
@@ -167,25 +168,5 @@ class RobotMaze(object):
 		self.setVel(data)
 		self.rate.sleep()
 		
-
-"""
-if __name__ == '__main__':
-    rospy.init_node("Turtlebot_Maze")
-    handler = Turtlebot_Maze()
-
-    # script
-    #for i in range(0,4):
-   # 	handler.moveRotate(math.pi/2,1.5)
-   # 	handler.rate.sleep()
-    handler.moveStraight(0.8, 0.3)
-    handler.moveStraight(0.8, 0.3)
-    handler.moveRotate(math.pi/2,1.5) 
-    handler.moveStraight(0.8, 0.3) 
-    handler.moveRotate(math.pi/2,1.5) 
-    handler.moveStraight(0.8, 0.3)
-    handler.moveStraight(0.8, 0.3)
-    handler.moveRotate(-math.pi/2,1.5)
-    rospy.spin()
-"""
     
 
