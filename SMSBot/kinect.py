@@ -46,13 +46,30 @@ class KinectManager(object):
     
     def obstacleInFront(self, threshold):
         D = self.current_cv_depth_image
-        banda = D[230:250, :]
+        banda = D[:, 300:370]
+        dists = banda.mean(0);
+        if(numpy.any(dists<threshold)):
+            rospy.loginfo("STOP!!")            
+	    return 1
+        return 0
+    
+    def obstacleOnRight(self, threshold):
+	D = self.current_cv_depth_image
+        banda = D[230:250, 440:540]
         dists = banda.mean(0);
         if(numpy.any(dists<threshold)):
             return 1
-            rospy.loginfo("STOP!!")
-        return 0
-    
+        return 0    
+
+    def obstacleOnLeft(self, threshold):
+	D = self.current_cv_depth_image
+        banda = D[230:250, 130:230]
+        dists = banda.mean(0);
+        if(numpy.any(dists<threshold)):
+            return 1
+        return 0  
+	
+    '''
     def hayPared(self,distancia_pared):        
         D = self.current_cv_depth_image
         """Aca yo veria si es que en un sector mas o menos grande, por ejemplo R[100:400, 150:350], es del mismo color    """
@@ -63,6 +80,8 @@ class KinectManager(object):
         if(numpy.mean(dist) < distancia_pared):
             return 1            
         return 0
+    '''
+
     def getSideAlignment(self):
         D = self.current_cv_depth_image
         """Ve dos de los lados y entrega la diferencia"""
@@ -70,8 +89,9 @@ class KinectManager(object):
         a1 = numpy.mean(banda[:,100:120])
         a2 = numpy.mean(banda[:,520:540])
         return a2-a1
+    
     def getAlignment(self):
-        D = self.current_cv_depth_image
+	D = self.current_cv_depth_image
         """Ve dos puntos de una pared y entrega la diferencia"""
         banda = D[230:250, :];
         a1 = numpy.mean(banda[:,250:300])

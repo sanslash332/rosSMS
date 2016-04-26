@@ -44,6 +44,7 @@ class MovementManager(object):
         
     def setVel(self, data):
         self._navPub.publish(data)
+    
     def setVelA(self, vel):
 	vela = vel
 	if(vel > 2):
@@ -52,7 +53,9 @@ class MovementManager(object):
 		vela = -2
 	self._vel.angular.z = vela
         self._navPub.publish(self._vel)
+    
     def setVelX(self, vel):
+	
 	velx = vel
 	if(vel > 0.5):
 		velx = 0.5
@@ -60,9 +63,11 @@ class MovementManager(object):
 		velx = -0.5
 	self._vel.linear.x = velx
         self._navPub.publish(self._vel)
+    
     def stop(self):
-        data = Twist()
-        self._navPub.publish(data)
+        self._vel = Twist()
+        self._navPub.publish(self._vel)
+	self.rate.sleep()
 
     def getPosition(self):
         return(self._position)

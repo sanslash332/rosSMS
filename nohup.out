@@ -1,0 +1,6 @@
+[31mInvalid roslaunch XML syntax: not well-formed (invalid token): line 1, column 1[0m
+... logging to /home/user/.ros/log/10f7c208-071b-11e6-a2a4-240a641be921/roslaunch-turtlebot-24243.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+]2;/opt/ros/hydro/lib/sound_play/soundplay_node.py
