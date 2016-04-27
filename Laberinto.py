@@ -3,7 +3,7 @@ from SMSBot.robot import Robot
 from busqueda.mapa import Mapa
 
 def main():
-	tortuga = Robot('s')
+	tortuga = Robot('e')
 	while (tortuga.kinect.getDepthImage().shape == (1,1,3)):
 		rospy.loginfo("cargando kinect")	
 	tortuga.sound.say("kinect ready")
@@ -11,10 +11,14 @@ def main():
 	#tortuga.correctAlignment()
 	#tortuga.correctDistance(0.5)	
 	
-	tortuga.moveStraight(2, 0.3)
-	#pasos = ['w','n','n','e','s','e','e']
-	#for p in pasos:
-	#	tortuga.moveMaze(p)
+	#tortuga.moveStraight(2, 0.3)
+	pasos = ['e','n','w','n','e']
+	for p in pasos:
+		tortuga.moveMaze(p)
+	tortuga.sound.say("I got to the goal!")
+	"""while(1):
+		tortuga.kinect.showDistances()
+		tortuga.movement.rate.sleep()"""
 
 if __name__ == '__main__':
 	try:

@@ -68,7 +68,17 @@ class KinectManager(object):
         if(numpy.any(dists<threshold)):
             return 1
         return 0  
-	
+    def showDistances(self):
+	D = self.current_cv_depth_image
+        bandar = D[230:250, 440:540]
+	bandal = D[230:250, 130:230]
+	bandaf = D[:, 300:370]
+        dr = bandar.mean(0);
+	dl = bandal.mean(0);
+	df = bandaf.mean(0);
+	rospy.loginfo("dr = " + str(numpy.any(dr < 0.7)))
+	rospy.loginfo("dl = " + str(numpy.any(dl < 0.7)))
+	rospy.loginfo("df = " + str(numpy.any(df < 0.5)))
     '''
     def hayPared(self,distancia_pared):        
         D = self.current_cv_depth_image

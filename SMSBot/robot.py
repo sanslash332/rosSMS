@@ -50,80 +50,89 @@ class Robot(object):
 	if(self.kinect.getDistance(320, 240)<1):		
 		self.correctAlignment()
 		self.correctDistance(0.5)
+    def sayNextMovement(self, ori):
+	if ori == 'n':
+		self.sound.say("moving north")
+	elif ori == 'e':
+		self.sound.say("moving east")
+	elif ori == 's':
+		self.sound.say("moving south")
+	else:
+		self.sound.say("moving west")
 
-    def moveMaze(self, ori):		
-		if self.orientacionActual == 'n':
-			if ori == 'n':
-				self.moveStraight(0.8, 0.3)
-			elif ori == 'e':
-				self.correctWallInFront()
-				self.moveRotate(-math.pi/2,1.5) 				
-				self.moveStraight(0.8, 0.3)
-			elif ori == 's':
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)				
-				self.moveStraight(0.8, 0.3)
-			else:
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)				
-				self.moveStraight(0.8, 0.3)
-		elif self.orientacionActual == 'w':
-			if ori == 'w':
-				self.moveStraight(0.8, 0.3)
-			elif ori == 'n':
-				self.correctWallInFront()				
-				self.moveRotate(-math.pi/2,1.5)				
-				self.moveStraight(0.8, 0.3)
-			elif ori == 'e':
-				self.correctWallInFront()				
-				self.moveRotate(math.pi/2,1.5)
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)				
-				self.moveStraight(0.8, 0.3)
-			else:
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)			
-				self.moveStraight(0.8, 0.3)
-		elif self.orientacionActual == 's':
-			if ori == 's':
-				self.moveStraight(0.8, 0.3)
-			elif ori == 'w':
-				self.correctWallInFront()
-				self.moveRotate(-math.pi/2,1.5)				
-				self.moveStraight(0.8, 0.3)
-			elif ori == 'n':
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)				
-				self.moveStraight(0.8, 0.3)
-			else:
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)			
-				self.moveStraight(0.8, 0.3)
+    def moveMaze(self, ori):
+	self.sayNextMovement(ori)		
+	if self.orientacionActual == 'n':
+		if ori == 'n':
+			self.moveStraight(0.8, 0.3)
+		elif ori == 'e':
+			self.correctWallInFront()
+			self.moveRotate(-math.pi/2,1.5) 				
+			self.moveStraight(0.8, 0.3)
+		elif ori == 's':
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)				
+			self.moveStraight(0.8, 0.3)
 		else:
-			if ori == 'e':
-				self.moveStraight(0.8, 0.3)
-			elif ori == 's':
-				self.correctWallInFront()
-				self.moveRotate(-math.pi/2,1.5)				
-				self.moveStraight(0.8, 0.3)
-			elif ori == 'w':
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)				
-				self.moveStraight(0.8, 0.3)
-			else:
-				self.correctWallInFront()
-				self.moveRotate(math.pi/2,1.5)			
-				self.moveStraight(0.8, 0.3)
-		self.orientacionActual = ori
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)				
+			self.moveStraight(0.8, 0.3)
+	elif self.orientacionActual == 'w':
+		if ori == 'w':
+			self.moveStraight(0.8, 0.3)
+		elif ori == 'n':
+			self.correctWallInFront()				
+			self.moveRotate(-math.pi/2,1.5)				
+			self.moveStraight(0.8, 0.3)
+		elif ori == 'e':
+			self.correctWallInFront()				
+			self.moveRotate(math.pi/2,1.5)
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)				
+			self.moveStraight(0.8, 0.3)
+		else:
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)			
+			self.moveStraight(0.8, 0.3)
+	elif self.orientacionActual == 's':
+		if ori == 's':
+			self.moveStraight(0.8, 0.3)
+		elif ori == 'w':
+			self.correctWallInFront()
+			self.moveRotate(-math.pi/2,1.5)				
+			self.moveStraight(0.8, 0.3)
+		elif ori == 'n':
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)				
+			self.moveStraight(0.8, 0.3)
+		else:
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)			
+			self.moveStraight(0.8, 0.3)
+	else:
+		if ori == 'e':
+			self.moveStraight(0.8, 0.3)
+		elif ori == 's':
+			self.correctWallInFront()
+			self.moveRotate(-math.pi/2,1.5)				
+			self.moveStraight(0.8, 0.3)
+		elif ori == 'w':
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)				
+			self.moveStraight(0.8, 0.3)
+		else:
+			self.correctWallInFront()
+			self.moveRotate(math.pi/2,1.5)			
+			self.moveStraight(0.8, 0.3)
+	self.orientacionActual = ori
 
-    def moveStraight(self, distance, vel, brakeHelp=False, obstacleDetect=True, obsThreshold = 0.5):
-
+    def moveStraight(self, distance, vel, brakeHelp=False, obstacleDetect=True, frontThreshold = 0.52, sideThreshold =0.55):
         self.movement.rate.sleep()
         posxInit = self.movement.position.x
         posyInit = self.movement.position.y
@@ -142,26 +151,21 @@ class Robot(object):
                 velx = self.kpx * (distance - dist)
                 if velx > vel:
                     velx=vel
-        #if dist < 0.4: #Hace que la partida sea mas suave
-		#velx = dist 
-
-
-            data = Twist()
-            data.linear.x = velx
+            if dist <= vel - 0.05: #Hace que la partida sea mas suave
+		velx = dist + 0.05 
 	    
             # gira si tiene un muro muy cerca a los lados
             vela = 0;
-	    if self.kinect.obstacleOnRight(0.52):
+	    if self.kinect.obstacleOnRight(sideThreshold):
 	    	vela = 1.5
-	    if self.kinect.obstacleOnLeft(0.52):
+	    if self.kinect.obstacleOnLeft(sideThreshold):
 		vela = -1.5
-            #self.movement.setVel(data)
+
 	    self.movement.setVelX(velx)
 	    self.movement.setVelA(vela)
             self.movement.rate.sleep()
 
-        data=Twist()
-        self.movement.setVel(data)
+        self.movement.stop()
         self.movement.rate.sleep()
 
 
@@ -192,8 +196,9 @@ class Robot(object):
                 data.angular.z = vela
                 self.movement.setVel(data)
                 self.movement.rate.sleep()
-            data = Twist()		
-            self.movement.setVel(data)
+
+            self.movement.stop()
+            self.movement.rate.sleep()
         else:
             while(ang2 > angle*0.88):
                 ang3 = self.movement.getRadianAngle()
@@ -213,6 +218,6 @@ class Robot(object):
                 data.angular.z = vela
                 self.movement.setVel(data)
                 self.movement.rate.sleep()
-            data = Twist()		
-            self.movement.setVel(data)
+            self.movement.stop()
+            self.movement.rate.sleep()
 
