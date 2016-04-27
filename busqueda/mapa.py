@@ -145,6 +145,18 @@ class Mapa(object):
                 self.estructura[x][y].euristicCost = 99999999
                 self.estructura[x][y].currentCost = 99999999 
 
+    def getStartDirection(self):
+	if(self.startDirection == 'l'):
+		return 'w'
+	elif(self.startDirection == 'u'):
+		return 'n'
+	elif(self.startDirection == 'd'):
+		return 's'
+	elif(self.startDirection == 'r'):
+		return 'e'
+	else:
+		return 'error'
+
     def getCompletePath(self):
         return(self._finalPath)
 

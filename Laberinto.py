@@ -3,22 +3,20 @@ from SMSBot.robot import Robot
 from busqueda.mapa import Mapa
 
 def main():
-	tortuga = Robot('e')
 	mapa = Mapa("mapa.txt")
 	
+	tortuga = Robot(mapa.getStartDirection())
 	while (tortuga.kinect.getDepthImage().shape == (1,1,3)):
 		rospy.loginfo("cargando kinect")	
 	tortuga.sound.say("kinect ready")
 
-	#tortuga.correctAlignment()
-	#tortuga.correctDistance(0.5)	
-	
-	#tortuga.moveStraight(2, 0.3)
 	tortuga.sound.playBuiltSound(3)
-	#pasos = ['e','n','w','n','e']
 	pasos= mapa.solveMap()
+
+	#rospy.loginfo(mapa.getStartDirection())
 	for p in pasos:
-		tortuga.moveMaze(p)
+		tortuga.moveMaze(p)		
+		#rospy.loginfo(p)
 	tortuga.sound.say("I got to the goal!")
 	tortuga.sound.playSound('/home/user/sounds/1up.wav')
 	
