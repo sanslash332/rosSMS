@@ -55,7 +55,7 @@ class KinectManager(object):
     
     def obstacleOnRight(self, threshold):
 	D = self.current_cv_depth_image
-        banda = D[230:250, 440:540]
+        banda = D[230:250, 470:540]
         dists = banda.mean(0);
         if(numpy.any(dists<threshold)):
             return 1
@@ -63,11 +63,17 @@ class KinectManager(object):
 
     def obstacleOnLeft(self, threshold):
 	D = self.current_cv_depth_image
-        banda = D[230:250, 130:230]
+        banda = D[230:250, 130:200]
         dists = banda.mean(0);
         if(numpy.any(dists<threshold)):
             return 1
         return 0  
+
+    def wallInFront(self):
+	if(self.getDistance(320, 240)<1):
+	    return 1
+	return 0
+
     def showDistances(self):
 	D = self.current_cv_depth_image
         bandar = D[230:250, 440:540]

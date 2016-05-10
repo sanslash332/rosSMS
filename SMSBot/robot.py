@@ -50,6 +50,7 @@ class Robot(object):
 	if(self.kinect.getDistance(320, 240)<1):		
 		self.correctAlignment()
 		self.correctDistance(0.5)
+
     def sayNextMovement(self, ori):
 	if ori == 'n':
 		self.sound.say("moving north")
@@ -64,82 +65,80 @@ class Robot(object):
 	self.sayNextMovement(ori)		
 	if self.orientacionActual == 'n':
 		if ori == 'n':
-			self.moveStraight(0.8, 0.3)
+			self.advanceOneCell()
 		elif ori == 'e':
-			self.correctWallInFront()
-			self.moveRotate(-math.pi/2,1.5) 				
-			self.moveStraight(0.8, 0.3)
+			self.turnRight()				
+			self.advanceOneCell()
 		elif ori == 's':
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)				
-			self.moveStraight(0.8, 0.3)
+			self.turnLeft()
+			self.turnLeft()			
+			self.advanceOneCell()
 		else:
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)				
-			self.moveStraight(0.8, 0.3)
+			self.turnLeft()			
+			self.advanceOneCell()
 	elif self.orientacionActual == 'w':
 		if ori == 'w':
-			self.moveStraight(0.8, 0.3)
+			self.advanceOneCell()
 		elif ori == 'n':
-			self.correctWallInFront()				
-			self.moveRotate(-math.pi/2,1.5)				
-			self.moveStraight(0.8, 0.3)
+			self.turnRight()				
+			self.advanceOneCell()
 		elif ori == 'e':
-			self.correctWallInFront()				
-			self.moveRotate(math.pi/2,1.5)
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)				
-			self.moveStraight(0.8, 0.3)
+			self.turnLeft()
+			self.turnLeft()				
+			self.advanceOneCell()
 		else:
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)			
-			self.moveStraight(0.8, 0.3)
+			self.turnLeft()		
+			self.advanceOneCell()
 	elif self.orientacionActual == 's':
 		if ori == 's':
-			self.moveStraight(0.8, 0.3)
+			self.advanceOneCell()
 		elif ori == 'w':
-			self.correctWallInFront()
-			self.moveRotate(-math.pi/2,1.5)				
-			self.moveStraight(0.8, 0.3)
+			self.turnRight()			
+			self.advanceOneCell()
 		elif ori == 'n':
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)				
-			self.moveStraight(0.8, 0.3)
+			self.turnLeft()
+			self.turnLeft()			
+			self.advanceOneCell()
 		else:
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)			
-			self.moveStraight(0.8, 0.3)
+			self.turnLeft()			
+			self.advanceOneCell()
 	else:
 		if ori == 'e':
-			self.moveStraight(0.8, 0.3)
+			self.advanceOneCell()
 		elif ori == 's':
-			self.correctWallInFront()
-			self.moveRotate(-math.pi/2,1.5)				
-			self.moveStraight(0.8, 0.3)
+			self.turnRight()		
+			self.advanceOneCell()
 		elif ori == 'w':
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)				
-			self.moveStraight(0.8, 0.3)
+			self.turnLeft()
+			self.turnLeft()			
+			self.advanceOneCell()
 		else:
-			self.correctWallInFront()
-			self.moveRotate(math.pi/2,1.5)			
-			self.moveStraight(0.8, 0.3)
+			self.turnLeft()		
+			self.advanceOneCell()
 	self.orientacionActual = ori
+	
+    def advanceOneCell(self):
+	self.moveStraight(0.8, 0.3)
 
-    def moveStraight(self, distance, vel, brakeHelp=False, obstacleDetect=True, frontThreshold = 0.52, sideThreshold =0.55):
+    def turnLeft(self, align=True):
+	if align:
+		self.correctWallInFront()
+	self.moveRotate(math.pi/2,1.5)
+
+    def turnRight(self, align=True):
+	if align:
+		self.correctWallInFront()	
+	self.moveRotate(-math.pi/2,1.5)
+
+    def moveStraight(self, distance, vel, brakeHelp=True, obstacleDetect=True, frontThreshold = 0.52, sideThreshold =0.55):
         self.movement.rate.sleep()
         posxInit = self.movement.position.x
         posyInit = self.movement.position.y
         dist=0
         
         while(dist< distance):           
-            if obstacleDetect and self.kinect.obstacleInFront(0.52):
+            if obstacleDetect and self.kinect.obstacleInFront(frontThreshold):
+		#self.correctWallInFront()
                 break # agregar deteccion del lado del obstaculo y enderezar
 	    
             x = self.movement.position.x - posxInit
@@ -148,9 +147,11 @@ class Robot(object):
             #rospy.loginfo("distancia: " + str(dist))
             velx=vel
             if brakeHelp:
-                velx = self.kpx * (distance - dist)
+                velx = 2*(distance - dist)
                 if velx > vel:
                     velx=vel
+		elif velx < 0.05:
+                    velx=0.01
             if dist <= vel - 0.05: #Hace que la partida sea mas suave
 		velx = dist + 0.05 
 	    
@@ -179,7 +180,7 @@ class Robot(object):
         if(angle < 0):
             vela = -vel
         if(angle > 0):
-            while(ang2 < angle*0.8):
+            while(ang2 < angle*0.88):
                 ang3 = self.movement.getRadianAngle()
                 if ang3<0 and angInit>0:
                     ang3 = self.movement.getRadianAngle() + 2*math.pi
