@@ -130,7 +130,7 @@ class Robot(object):
 		self.correctWallInFront()	
 	self.moveRotate(-math.pi/2,1.5)
 
-    def moveStraight(self, distance, vel, brakeHelp=True, obstacleDetect=True, frontThreshold = 0.52, sideThreshold =0.55):
+    def moveStraight(self, distance, vel, brakeHelp=True, obstacleDetect=True, frontThreshold = 0.52, sideThreshold =0.52):
         self.movement.rate.sleep()
         posxInit = self.movement.position.x
         posyInit = self.movement.position.y
@@ -158,9 +158,9 @@ class Robot(object):
             # gira si tiene un muro muy cerca a los lados
             vela = 0;
 	    if self.kinect.obstacleOnRight(sideThreshold):
-	    	vela = 1.5
+	    	vela = 1.5*velx/vel
 	    if self.kinect.obstacleOnLeft(sideThreshold):
-		vela = -1.5
+		vela = -1.5*velx/vel
 
 	    self.movement.setVelX(velx)
 	    self.movement.setVelA(vela)
