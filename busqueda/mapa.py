@@ -185,6 +185,8 @@ class Mapa(object):
         
         celdasYPosiciones= []
         for x in celdasConcideradas:
+            print(x)
+
             celdasYPosiciones.append((x,NORTH))
             celdasYPosiciones.append((x,EAST))
             celdasYPosiciones.append((x,SOUTH))
