@@ -218,6 +218,7 @@ class Mapa(object):
             robot.turnRight()
 
         descartables = []
+        print("Datos optenidos hasta ahora: " + str(datosConocidos))
 
         for x in range(0,len(celdasYPosiciones)):
             dato = celdasYPosiciones[x]
@@ -228,6 +229,7 @@ class Mapa(object):
         for x in descartables:
             celdasYPosiciones.remove(x)
         robot.sound.say("discarded %i celds and positions " % len(descartables))
+        print("descatadas %i celdas, quedan %i" % (len(descartables), len(celdasYPosiciones)))
         if len(celdasYPosiciones) == 1:
             celda=   celdasYPosiciones[-1][0]
 
@@ -313,6 +315,7 @@ class Mapa(object):
                     for y in lista:
                         if x != y:
                             return(True)
+                            print("descartada celda %s " % str(celd))
 
         return(False)
 
