@@ -221,6 +221,7 @@ class Mapa(object):
         print("Datos optenidos hasta ahora: " + str(datosConocidos))
 
         for x in range(0,len(celdasYPosiciones)):
+            print(" revisando celda numero %i de la lista " % x)
             dato = celdasYPosiciones[x]
             borrable = self._detectDescartable(dato, datosConocidos, movimientosRealizados)
             if borrable:
