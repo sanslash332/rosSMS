@@ -185,7 +185,7 @@ class Mapa(object):
         
         celdasYPosiciones= []
         for x in celdasConcideradas:
-            for y in celdasConcideradas[x]:
+            for y in x:
 
 
                 celdasYPosiciones.append((y,NORTH))
