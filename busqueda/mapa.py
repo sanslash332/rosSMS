@@ -314,8 +314,9 @@ class Mapa(object):
                 for x in datosConocidos[-1]:
                     for y in lista:
                         if x != y:
-                            return(True)
                             print("descartada celda %s " % str(celd))
+                            return(True)
+                            
 
         return(False)
 
