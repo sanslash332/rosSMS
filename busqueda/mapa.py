@@ -219,7 +219,7 @@ class Mapa(object):
 
         descartables = []
         print("Datos optenidos hasta ahora: " + str(datosConocidos))
-
+        print("hay un total de %i celdas y posisiones con las que comparar " % len(celdasYPosiciones))
         for x in range(0,len(celdasYPosiciones)):
             print(" revisando celda numero %i de la lista " % x)
             dato = celdasYPosiciones[x]
