@@ -2,6 +2,11 @@
 # -*- coding: latin-1 -*-
 from busqueda.celda import *
 
+NORTH = 0
+EAST = 1
+SOUTH =3
+WEST=4
+
 class Mapa(object):
     """Clase que representa a un mapa del problema """
     def __init__(self, archname= ""):
@@ -146,16 +151,16 @@ class Mapa(object):
                 self.estructura[x][y].currentCost = 99999999 
 
     def getStartDirection(self):
-	if(self.startDirection == 'l'):
-		return 'w'
-	elif(self.startDirection == 'u'):
-		return 'n'
-	elif(self.startDirection == 'd'):
-		return 's'
-	elif(self.startDirection == 'r'):
-		return 'e'
-	else:
-		return 'error'
+        if(self.startDirection == 'l'):
+            return 'w'
+        elif(self.startDirection == 'u'):
+            return 'n'
+        elif(self.startDirection == 'd'):
+            return 's'
+        elif(self.startDirection == 'r'):
+            return 'e'
+        else:
+            return 'error'
 
     def getCompletePath(self):
         return(self._finalPath)
@@ -169,6 +174,145 @@ class Mapa(object):
         else:
 
             return(self.estructura[x][y])
+
+    def detectMyCeld(self,robot):
+        celdasConcideradas = self.estructura
+        movimientosRealizados=[]
+
+
+        datosConocidos = []
+        datosConocidos.append([])
+        
+        celdasYPosiciones= []
+        for x in celdasConcideradas:
+            celdasYPosiciones.append((x,NORTH))
+            celdasYPosiciones.append((x,EAST))
+            celdasYPosiciones.append((x,SOUTH))
+            celdasYPosiciones.append((x,WEST))
+
+        robot.sound.say("starting to find my celda ")
+        celda= self._detectMyCeldRecursiveStep(robot, celdasConcideradas, celdasYPosiciones, datosConocidos, movimientosRealizados)
+        if celda== None:
+            robot.sound.say("can't enconter my start position. I wana cry ")
+        else:
+            self.startCelda=celda
+            robot.sound.say("start celd encontered, proceed with find my path")
+
+
+        
+        #regresar al robot a la celda inicial
+
+
+
+    def _detectMyCeldRecursiveStep(self,robot,celdasConcideradas, celdasYPosiciones, datosConocidos, movimientosRealizados):
+        celda = None
+        robot.sound.say("viewing sides")
+        for x in range(0,4):
+            if robot.wallInFront:
+                datosConocidos[-1].append(WALL)
+            else:
+                datosConocidos[-1].append(UNDEFINEDPATH)
+            robot.turnRight()
+
+        descartables = []
+
+        for x in range(0,len(celdasYPosiciones)):
+            dato = celdasYPosiciones[x]
+            borrable = self._detectDescartable(dato, datosConocidos, movimientosRealizados)
+            if borrable:
+                descartables.append(dato)
+
+        for x in descartables:
+            celdasYPosiciones.remove(x)
+        robot.sound.say("discarded %i celds and positions " % len(descartables))
+        if len(celdasYPosiciones) == 1:
+            celda=   celdasYPosiciones[-1][0]
+
+        else:
+            for x in range(0,len(datosConocidos[-1])):
+                robot.turnRight()
+                if datosConocidos[-1][x] == WALL:
+                    continue
+                movimientosRealizados.append(x)
+                robot.sound.say("go into near celd")
+                robot.advanceOneCeld()
+                celda= self._detectMyCeldRecursiveStep(robot, celdasConcideradas, celdasYPosiciones, datosConocidos,movimientosRealizados)
+                robot.sound.say("returning to previows celd")
+                robot.turnRight()
+                robot.turnRight()
+                robot.turnRight()
+                robot.turnRight()
+                robot.advanceOneCeld()
+                robot.turnRight()
+                robot.turnRight()
+                robot.turnRight()
+                robot.turnRight()
+
+                del movimientosRealizados[-1]
+                if celda != None:
+                    robot.sound.say("returning to start position... I am sick.")
+                    for y in range(0,x+1):
+                        robot.turnLeft()
+                    break
+
+        return(celda)
+
+    def _detectDescartable(self, dato, datosConocidos, movimientos):
+
+        dir= dato[1]
+        if len(movimientos) == 0:
+
+            celd = dato[0]
+        else:
+            for x in movimientos:
+                direction = (dir+x)%4
+                if direction== NORTH:
+                    celd= celd.north
+                elif direction == EAST:
+                    celd = celd.east
+                elif direction == SOUTH:
+                    celd = celd.south
+                elif direction == WEST:
+                    celd = celd.west
+                if celd== WALL or celd==ENDPOINT:
+                    return(True)
+                else:
+                    dir=direction
+
+
+        if celd.north == WALL:
+            northdata = WALL
+        else:
+            northdata = UNDEFINEDPATH
+        if celd.east == WALL:
+            eastdata = WALL
+        else:
+            eastdata = UNDEFINEDPATH
+        if celd.south == WALL:
+            southdata = WALL
+        else:
+            southdata = UNDEFINEDPATH
+        if celd.west==WALL:
+            westdata=WALL
+        else:
+            westdata= UNDEFINEDPATH
+
+            if dir== NORTH:
+                lista= [northdata,eastdata,southdata,westdata]
+            elif dir== EAST:
+                lista = [eastdata,southdata,westdata,northdata]
+            elif dir==SOUTH:
+                lista=[southdata,westdata,northdata,eastdata]
+            else:
+                lista= [westdata,northdata,eastdata,southdata]
+
+                for x in datosConocidos[-1]:
+                    for y in lista:
+                        if x != y:
+                            return(True)
+
+        return(False)
+
 
     def solveMap(self):
         self.resetCostAndPath()
