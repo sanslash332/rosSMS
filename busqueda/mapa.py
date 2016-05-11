@@ -315,6 +315,7 @@ class Mapa(object):
                 lista= [westdata,northdata,eastdata,southdata]
 
                 for x in range(0,4):
+                    print("comparando %i con %i " % (datosConocidos[-1][x], lista[x]))
                     
                     if datosConocidos[-1][x] != lista[x]:
                         print("descartada celda %s, con dirección %i " % (str(celd), dir))
