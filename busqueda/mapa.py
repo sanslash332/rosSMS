@@ -240,14 +240,10 @@ class Mapa(object):
                 robot.sound.say("returning to previows celd")
                 robot.turnRight()
                 robot.turnRight()
-                robot.turnRight()
-                robot.turnRight()
                 robot.advanceOneCeld()
                 robot.turnRight()
                 robot.turnRight()
-                robot.turnRight()
-                robot.turnRight()
-
+                
                 del movimientosRealizados[-1]
                 if celda != None:
                     robot.sound.say("returning to start position... I am sick.")
