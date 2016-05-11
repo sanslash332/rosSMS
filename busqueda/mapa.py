@@ -269,6 +269,7 @@ class Mapa(object):
 
             celd = dato[0]
         else:
+            print("deteccion con mas movimientos")
             celd = dato[0]
 
             for x in movimientos:
