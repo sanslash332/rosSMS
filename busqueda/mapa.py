@@ -263,8 +263,11 @@ class Mapa(object):
 
             celd = dato[0]
         else:
+            celd = dato[0]
+
             for x in movimientos:
                 direction = (dir+x)%4
+                print("buscando datos en cadena, direccion encontrada %i " % direction)
                 if direction== NORTH:
                     celd= celd.north
                 elif direction == EAST:
@@ -273,6 +276,7 @@ class Mapa(object):
                     celd = celd.south
                 elif direction == WEST:
                     celd = celd.west
+                print("celda seleccionada para continuar " + str(celd))
                 if celd== WALL or celd==ENDPOINT:
                     return(True)
                 else:
