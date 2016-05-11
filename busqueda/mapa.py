@@ -199,7 +199,7 @@ class Mapa(object):
             robot.sound.say("can't enconter my start position. I wana cry ")
         else:
             self.startCelda=celda
-            robot.sound.say("start celd encontered, proceed with find my path")
+            robot.sound.say("start celd encontered in position %i, %i, proceed with find my path" % (celda.x,celda.y))
 
 
         
