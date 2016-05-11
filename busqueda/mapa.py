@@ -241,6 +241,7 @@ class Mapa(object):
                 movimientosRealizados.append(x)
                 robot.sound.say("go into near celd")
                 robot.advanceOneCell()
+                datosConocidos.append([])
                 celda= self._detectMyCeldRecursiveStep(robot, celdasConcideradas, celdasYPosiciones, datosConocidos,movimientosRealizados)
                 robot.sound.say("returning to previows celd")
                 robot.turnRight()
@@ -250,6 +251,7 @@ class Mapa(object):
                 robot.turnRight()
                 
                 del movimientosRealizados[-1]
+                del datosConocidos[-1]
                 if celda != None:
                     robot.sound.say("returning to start position... I am sick.")
                     for y in range(0,x+1):
@@ -311,11 +313,11 @@ class Mapa(object):
             else:
                 lista= [westdata,northdata,eastdata,southdata]
 
-                for x in datosConocidos[-1]:
-                    for y in lista:
-                        if x != y:
-                            print("descartada celda %s " % str(celd))
-                            return(True)
+                for x in range(0,4):
+                    
+                    if datosConocidos[-1][x] != lista[x]:
+                        print("descartada celda %s, con dirección %i " % (str(celd), dir))
+                        return(True)
                             
 
         return(False)
