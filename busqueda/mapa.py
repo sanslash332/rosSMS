@@ -308,13 +308,13 @@ class Mapa(object):
             westdata= UNDEFINEDPATH
 
         if dir== NORTH:
-                lista= [northdata,eastdata,southdata,westdata]
+            lista= [northdata,eastdata,southdata,westdata]
         elif dir== EAST:
-                lista = [eastdata,southdata,westdata,northdata]
+            lista = [eastdata,southdata,westdata,northdata]
         elif dir==SOUTH:
-                lista=[southdata,westdata,northdata,eastdata]
+            lista=[southdata,westdata,northdata,eastdata]
         else:
-                lista= [westdata,northdata,eastdata,southdata]
+            lista= [westdata,northdata,eastdata,southdata]
 
         for x in range(0,4):
             print("comparando %i con %i " % (datosConocidos[-1][x], lista[x]))
