@@ -238,12 +238,12 @@ class Mapa(object):
                     continue
                 movimientosRealizados.append(x)
                 robot.sound.say("go into near celd")
-                robot.advanceOneCeld()
+                robot.advanceOneCell()
                 celda= self._detectMyCeldRecursiveStep(robot, celdasConcideradas, celdasYPosiciones, datosConocidos,movimientosRealizados)
                 robot.sound.say("returning to previows celd")
                 robot.turnRight()
                 robot.turnRight()
-                robot.advanceOneCeld()
+                robot.advanceOneCell()
                 robot.turnRight()
                 robot.turnRight()
                 
