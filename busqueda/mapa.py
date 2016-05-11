@@ -208,7 +208,7 @@ class Mapa(object):
         celda = None
         robot.sound.say("viewing sides")
         for x in range(0,4):
-            if robot.wallInFront:
+            if robot.kinect.wallInFront():
                 datosConocidos[-1].append(WALL)
             else:
                 datosConocidos[-1].append(UNDEFINEDPATH)
