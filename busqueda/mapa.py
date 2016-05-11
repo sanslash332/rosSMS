@@ -185,12 +185,13 @@ class Mapa(object):
         
         celdasYPosiciones= []
         for x in celdasConcideradas:
-            print(x)
+            for y in celdasConcideradas[x]:
 
-            celdasYPosiciones.append((x,NORTH))
-            celdasYPosiciones.append((x,EAST))
-            celdasYPosiciones.append((x,SOUTH))
-            celdasYPosiciones.append((x,WEST))
+
+                celdasYPosiciones.append((y,NORTH))
+                celdasYPosiciones.append((y,EAST))
+                celdasYPosiciones.append((y,SOUTH))
+                celdasYPosiciones.append((y,WEST))
 
         robot.sound.say("starting to find my celda ")
         celda= self._detectMyCeldRecursiveStep(robot, celdasConcideradas, celdasYPosiciones, datosConocidos, movimientosRealizados)
