@@ -307,21 +307,21 @@ class Mapa(object):
         else:
             westdata= UNDEFINEDPATH
 
-            if dir== NORTH:
+        if dir== NORTH:
                 lista= [northdata,eastdata,southdata,westdata]
-            elif dir== EAST:
+        elif dir== EAST:
                 lista = [eastdata,southdata,westdata,northdata]
-            elif dir==SOUTH:
+        elif dir==SOUTH:
                 lista=[southdata,westdata,northdata,eastdata]
-            else:
+        else:
                 lista= [westdata,northdata,eastdata,southdata]
 
-                for x in range(0,4):
-                    print("comparando %i con %i " % (datosConocidos[-1][x], lista[x]))
+        for x in range(0,4):
+            print("comparando %i con %i " % (datosConocidos[-1][x], lista[x]))
                     
-                    if datosConocidos[-1][x] != lista[x]:
-                        print("descartada celda %s, con dirección %i " % (str(celd), dir))
-                        return(True)
+            if datosConocidos[-1][x] != lista[x]:
+                print("descartada celda %s, con dirección %i " % (str(celd), dir))
+                return(True)
                             
 
         return(False)
