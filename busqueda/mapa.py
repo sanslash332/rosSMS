@@ -4,8 +4,8 @@ from busqueda.celda import *
 
 NORTH = 0
 EAST = 1
-SOUTH =3
-WEST=4
+SOUTH =2
+WEST=3
 
 class Mapa(object):
     """Clase que representa a un mapa del problema """
@@ -175,6 +175,64 @@ class Mapa(object):
 
             return(self.estructura[x][y])
 
+
+    def _debugSetStartCeld(self):
+        self.debugStartCeld = self.estructura[1][1]
+        self.debugStartPositionAndCeld = (self.debugStartCeld,SOUTH)
+        self.debugCurrentPositionCeld = self.debugStartPositionAndCeld
+        print(" seteada posicion celda inicial de depuración, %s con direccion %i " % (str(self.debugCurrentPositionCeld[0]), self.debugCurrentPositionCeld[1]))
+
+    def _debugIsWallInFront(self):
+        if self.debugCurrentPositionCeld[1] == NORTH:
+            
+            if self.debugCurrentPositionCeld[0].north == WALL:
+                print("muro en norte")
+                return(True)
+        if self.debugCurrentPositionCeld[1] == EAST:
+            if self.debugCurrentPositionCeld[0].east == WALL:
+                print("muro en este")
+                return(True)
+
+        if self.debugCurrentPositionCeld[1] == SOUTH:
+            if self.debugCurrentPositionCeld[0].south == WALL:
+                print("muro en sur")
+                return(True)
+
+        if self.debugCurrentPositionCeld[1] == WEST:
+            if self.debugCurrentPositionCeld[0].west == WALL:
+                print("muro en oeste")
+                return(True)
+
+        return(False)
+
+    def _debugTurnRight(self):
+        if self.debugCurrentPositionCeld[1] == WEST:
+            self.debugCurrentPositionCeld = (self.debugCurrentPositionCeld[0], NORTH)
+        else:
+            self.debugCurrentPositionCeld = (self.debugCurrentPositionCeld[0], self.debugCurrentPositionCeld[1]+1)
+        print("cambiada horientasion a %i " % self.debugCurrentPositionCeld[1])
+
+            
+    def _debugTurnLeft(self):
+        if self.debugCurrentPositionCeld[1] ==NORTH:
+            self.debugCurrentPositionCeld = (self.debugCurrentPositionCeld[0], WEST)
+
+        else:
+            self.debugCurrentPositionCeld = (self.debugCurrentPositionCeld[0], self.debugCurrentPositionCeld[1]-1)
+        print("cambiada horientasion a %i " % self.debugCurrentPositionCeld[1])
+
+    def _debugAdvanceOneCeld(self):
+        print("movilizando al robot debug desde  la celda %s, con direccion %i " % (str(self.debugCurrentPositionCeld[0]), self.debugCurrentPositionCeld[1]))
+        if self.debugCurrentPositionCeld[1] == NORTH:
+            self.debugCurrentPositionCeld=(self.debugCurrentPositionCeld[0].north, NORTH)
+        if self.debugCurrentPositionCeld[1] == EAST:
+            self.debugCurrentPositionCeld=(self.debugCurrentPositionCeld[0].east, EAST)
+        if self.debugCurrentPositionCeld[1] == SOUTH:
+            self.debugCurrentPositionCeld=(self.debugCurrentPositionCeld[0].south, SOUTH)
+        if self.debugCurrentPositionCeld[1] == WEST:
+            self.debugCurrentPositionCeld=(self.debugCurrentPositionCeld[0].west, WEST)
+        print("movilizado el robot debug a la celda %s, con direccion %i " % (str(self.debugCurrentPositionCeld[0]), self.debugCurrentPositionCeld[1]))
+
     def detectMyCeld(self,robot):
         celdasConcideradas = self.estructura
         movimientosRealizados=[]
@@ -194,13 +252,26 @@ class Mapa(object):
                 celdasYPosiciones.append((y,WEST))
 
         robot.sound.say("starting to find my celda ")
+        #self._debugSetStartCeld()
         celda= self._detectMyCeldRecursiveStep(robot, celdasConcideradas, celdasYPosiciones, datosConocidos, movimientosRealizados)
         if celda== None:
-            robot.sound.say("can't enconter my start position. I wana cry ")
+            #robot.sound.say("can't enconter my start position. I wana cry ")
+            print("no se encontro celda inicial")
         else:
-            self.startCelda=celda
-            robot.sound.say("start celd encontered in position %i, %i, proceed with find my path" % (celda.x,celda.y))
+            self.startCelda=celda[0]
+            if celda[1] == NORTH:
+                self.startDirection='n' 
+            elif celda[1] == EAST:
+                self.startDirection='e'
+            elif celda[1] == SOUTH:
+                self.startDirection='s'
+            elif celda[1]== WEST:
+                self.startDirection='w' 
 
+
+
+            robot.sound.say("start celd encontered in position %i, %i, proceed with find my path" % (celda[0].x,celda[0].y))
+            print("start celd encontered in position %i, %i, proceed with find my path" % (celda[0].x,celda[0].y))
 
         
         #regresar al robot a la celda inicial
@@ -210,12 +281,15 @@ class Mapa(object):
     def _detectMyCeldRecursiveStep(self,robot,celdasConcideradas, celdasYPosiciones, datosConocidos, movimientosRealizados):
         celda = None
         robot.sound.say("viewing sides")
+        print("analizando lados")
         for x in range(0,4):
             if robot.kinect.wallInFront():
+            #if self._debugIsWallInFront():
                 datosConocidos[-1].append(WALL)
             else:
                 datosConocidos[-1].append(UNDEFINEDPATH)
             robot.turnRight()
+            #self._debugTurnRight()
 
         descartables = []
         print("Datos optenidos hasta ahora: " + str(datosConocidos))
@@ -232,33 +306,54 @@ class Mapa(object):
         robot.sound.say("discarded %i celds and positions " % len(descartables))
         print("descatadas %i celdas, quedan %i" % (len(descartables), len(celdasYPosiciones)))
         if len(celdasYPosiciones) == 1:
-            celda=   celdasYPosiciones[-1][0]
+            celda=   celdasYPosiciones[-1]
 
         else:
             for x in range(0,len(datosConocidos[-1])):
-                robot.turnRight()
+                
+                print("estamos analizando el numero %i en la lista de objetos %s " % (x,str(datosConocidos[-1])))
+                
+
                 if datosConocidos[-1][x] == WALL:
+                    print("muro detectado, saltamos esta horientacion ")
+                    robot.sound.say("wall detected, skyp this position")
+                    robot.turnRight()
+                    #self._debugTurnRight()
                     continue
                 movimientosRealizados.append(x)
                 robot.sound.say("go into near celd")
+                print("go to near celd ")
                 robot.advanceOneCell()
+                #self._debugAdvanceOneCeld()
                 print("yendo en direccionn %i " % x)
                 datosConocidos.append([])
                 celda= self._detectMyCeldRecursiveStep(robot, celdasConcideradas, celdasYPosiciones, datosConocidos,movimientosRealizados)
                 robot.sound.say("returning to previows celd")
+                print("regresando a celda previa")
                 robot.turnRight()
                 robot.turnRight()
+                #self._debugTurnRight()
+                #self._debugTurnRight()
                 robot.advanceOneCell()
+                #self._debugAdvanceOneCeld()
                 robot.turnRight()
                 robot.turnRight()
+                #self._debugTurnRight()
+                #self._debugTurnRight()
+
                 
                 del movimientosRealizados[-1]
                 del datosConocidos[-1]
                 if celda != None:
                     robot.sound.say("returning to start position... I am sick.")
+                    #print("regresando posicoin inicial")
                     for y in range(0,x+1):
                         robot.turnLeft()
+                        #self._debugTurnLeft()
                     break
+                else:
+                    robot.turnRight()
+                    #self._debugTurnRight()
 
         return(celda)
 
