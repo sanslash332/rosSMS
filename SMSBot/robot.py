@@ -27,13 +27,14 @@ class Robot(object):
 
     def correctDistance(self, targetDist):
 	dist = self.kinect.getDistance(320, 240)
-	#rospy.loginfo("Initial distance = " + str(dist))	
+	#rospy.loginfo("Initial distance = " + str(dist))
+		
 	while(abs(dist-targetDist)>0.01):	
 		velx = 1*(dist-targetDist)
 		self.movement.setVelX(velx)
 		dist = self.kinect.getDistance(320, 240)
 	self.movement.stop()
-	self.sound.say("distance corrected")
+	#self.sound.say("distance corrected")
 	#rospy.loginfo("Final distance = " + str(dist))
 
     def correctAlignment(self): 
@@ -43,10 +44,15 @@ class Robot(object):
 		self.movement.setVelA(vela)
 		a = self.kinect.getAlignment()
 	self.movement.stop()
-	self.sound.say("aligned") 
+	#self.sound.say("aligned") 
 	#rospy.loginfo("Final alignment = " + str(a))
 
     def correctWallInFront(self):
+	while(not self.kinect.getDistance(240,320).any()):
+		#rospy.loginfo("Muro pegado")
+		velx = -0.1
+		self.movement.setVelX(velx)
+	self.movement.stop()	
 	if(self.kinect.getDistance(320, 240)<1):		
 		self.correctAlignment()
 		self.correctDistance(0.5)
@@ -54,67 +60,71 @@ class Robot(object):
     def sayNextMovement(self, ori):
 	if ori == 'n':
 		self.sound.say("moving north")
+		print "moving north"
 	elif ori == 'e':
 		self.sound.say("moving east")
+		print "moving east"
 	elif ori == 's':
 		self.sound.say("moving south")
+		print "moving south"
 	else:
 		self.sound.say("moving west")
+		print "moving west"
 
-    def moveMaze(self, ori):
+    def moveMaze(self, ori, move=1):
 	self.sayNextMovement(ori)		
 	if self.orientacionActual == 'n':
 		if ori == 'n':
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		elif ori == 'e':
 			self.turnRight()				
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		elif ori == 's':
 			self.turnLeft()
 			self.turnLeft()			
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		else:
 			self.turnLeft()			
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 	elif self.orientacionActual == 'w':
 		if ori == 'w':
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		elif ori == 'n':
 			self.turnRight()				
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		elif ori == 'e':
 			self.turnLeft()
 			self.turnLeft()				
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		else:
 			self.turnLeft()		
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 	elif self.orientacionActual == 's':
 		if ori == 's':
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		elif ori == 'w':
 			self.turnRight()			
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		elif ori == 'n':
 			self.turnLeft()
 			self.turnLeft()			
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		else:
 			self.turnLeft()			
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 	else:
 		if ori == 'e':
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		elif ori == 's':
 			self.turnRight()		
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		elif ori == 'w':
 			self.turnLeft()
 			self.turnLeft()			
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 		else:
 			self.turnLeft()		
-			self.advanceOneCell()
+			if move: self.advanceOneCell()
 	self.orientacionActual = ori
 	
     def advanceOneCell(self):
@@ -180,7 +190,7 @@ class Robot(object):
         if(angle < 0):
             vela = -vel
         if(angle > 0):
-            while(ang2 < angle*0.88):
+            while(ang2 < angle*0.85):
                 ang3 = self.movement.getRadianAngle()
                 if ang3<0 and angInit>0:
                     ang3 = self.movement.getRadianAngle() + 2*math.pi
@@ -201,7 +211,7 @@ class Robot(object):
             self.movement.stop()
             self.movement.rate.sleep()
         else:
-            while(ang2 > angle*0.88):
+            while(ang2 > angle*0.85):
                 ang3 = self.movement.getRadianAngle()
                 if ang3>0 and angInit<0:
                     ang3 = self.movement.getRadianAngle() - 2*math.pi

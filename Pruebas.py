@@ -7,19 +7,23 @@ import time
 from SMSBot.robot import Robot
 
 def main():
-	tortuga = Robot()
+	tortuga = Robot('n')
+	r = rospy.Rate(10)
 	while (tortuga.kinect.getDepthImage().shape == (1,1,3)):
 		rospy.loginfo("cargando kinect")
-		x1 = 100
-		y1 = 240
-		x2 = 520
+		#pythonvalecallampa = 0
 	while True:
-		img = tortuga.kinect.getDepthImage()
-		cv2.circle(img, (x1, y1), 2, (0, 255, 0), 20)
-		cv2.circle(img, (x2, y1), 2, (0, 255, 0), 20)
-		cv2.imshow("image_depth", img)	
-		cv2.waitKey(10)
-		rospy.loginfo("side alignment = " + str(tortuga.kinect.getSideAlignment()))
+		print tortuga.kinect.detectarLlave2(show = True)
+		#tortuga.turnRight()
+		#tortuga.turnRight()
+		#tortuga.turnRight()
+		#tortuga.turnRight()
+		#tortuga.turnLeft()
+		#tortuga.turnLeft()
+		#tortuga.turnLeft()
+		#tortuga.turnLeft()		
+		r.sleep()
+		
 
 
 if __name__ == '__main__':

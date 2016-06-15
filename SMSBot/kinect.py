@@ -20,6 +20,7 @@ class KinectManager(object):
         self.bridge = CvBridge()
         self.current_cv_depth_image = numpy.zeros((1,1,3))
         self.current_cv_rgb_image = numpy.zeros((1,1,3))
+	#self.faceClassifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 
     def depth_handler(self, data):
@@ -72,6 +73,9 @@ class KinectManager(object):
     def wallInFront(self):
 	if(self.getDistance(320, 240)<1):
 	    return 1
+	elif (not self.getDistance(240,320).any()):
+	    rospy.loginfo("muro al peo")
+	    return 1
 	return 0
 
     def showDistances(self):
@@ -117,6 +121,10 @@ class KinectManager(object):
     
     def showDepthImage(self):
         cv2.imshow("image_depth",self.current_cv_depth_image)    
+        cv2.waitKey(10)
+
+    def showRgbImage(self):
+        cv2.imshow("image_rgb",self.current_cv_rgb_image)    
         cv2.waitKey(10)
 
     def getRgbImage(self):
@@ -168,5 +176,260 @@ class KinectManager(object):
         #cv2.waitKey(10)
         return (320, 240)
     
+    def detectarCara(self):
+		
+	cascPath = "haarcascade_frontalface_default.xml"
+	#path = "barack.jpg"
+	faceCascade = cv2.CascadeClassifier(cascPath)	
+	img = self.current_cv_rgb_image
+	#img = cv2.imread(path)	
+	cv2.imshow("img", img)
+	gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	faces = faceCascade.detectMultiScale(gray_img, scaleFactor=1.3, minNeighbors = 5)
+	#print "Found {0} faces!".format(len(faces))	
+	for (x,y,w,h) in faces:
+		rospy.loginfo("Cara detectada")
+		cv2.rectangle(img, (x,y), (x+w, y+h), (255,0,0), 2)
+	cv2.imshow("img", img)
+	if len(faces) > 0:
+		return 1
+	return 0	
+	#cv2.waitKey(10)
+
+   
+    def detectarPuerta(self, show = False):	
+	img = self.current_cv_rgb_image
+
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	gray = cv2.GaussianBlur(gray, (5,5), 0)
+	edged = cv2.Canny(gray, 75, 200)
+	
+	# find contours in the image
+	(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
+	detected = 0
+	for c in cnts:
+		peri = cv2.arcLength(c, True)
+		approx = cv2.approxPolyDP(c, 0.02*peri, True)
+		
+		if len(approx) == 4:
+			papel = approx
+			detected = 1
+			break
+	if detected:
+		x,y,w,h = cv2.boundingRect(papel)
+		cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+		M1 = cv2.moments(papel);
+		area1 = M1['m00']
+		if area1 < 10000:
+			return 0
+		thresh_img = cv2.inRange(gray, 0, 80)[y:y+h, x:x+w]
+		"""thresh_img = thresh_img[20:h-20,20:w-20]
+		se1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+		#thresh_img = cv2.morphologyEx(thresh_img, cv2.MORPH_CLOSE, se1)oscor
+		thresh_img = cv2.morphologyEx(thresh_img, cv2.MORPH_OPEN, se1)"""
+		M2 = cv2.moments(thresh_img, 0)
+		area2 = M2['m00']/100
+		if show:
+			cv2.imshow("Lala", thresh_img)	
+			cv2.waitKey(10)
+		areaRatio = area2/area1
+		#print "area ratio = " + str(areaRatio)
+		if areaRatio > 2.3:
+			return 1		
+	return 0
+	
+    def detectarFormas(self, show = False):
+	img = self.current_cv_rgb_image
+
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	gray = cv2.GaussianBlur(gray, (5,5), 0)
+	edged = cv2.Canny(gray, 75, 200)
+	
+	# find contours in the image
+	(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
+	detected = 0
+	for c in cnts:
+		peri = cv2.arcLength(c, True)
+		approx = cv2.approxPolyDP(c, 0.02*peri, True)
+		
+		if len(approx) == 4:
+			papel = approx
+			detected = 1
+			break
+	if detected:
+		x,y,w,h = cv2.boundingRect(papel)
+		cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+		M1 = cv2.moments(papel);
+		area1 = M1['m00']
+		if area1 < 10000:
+			return "Nada"
+		thresh_img = cv2.inRange(gray, 0, 50)[y:y+h, x:x+w]
+		thresh_img = thresh_img[20:h-20,20:w-20]
+		se1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+		#thresh_img = cv2.morphologyEx(thresh_img, cv2.MORPH_CLOSE, se1)
+		thresh_img = cv2.morphologyEx(thresh_img, cv2.MORPH_OPEN, se1)
+		M2 = cv2.moments(thresh_img, 0)
+		area2 = M2['m00']/100
+		if show:
+			cv2.imshow("Lala", thresh_img)	
+			cv2.waitKey(10)
+		areaRatio = area2/area1
+		print "area ratio = " + str(areaRatio)
+		if areaRatio > 2.3:
+			return "Puerta"
+		elif areaRatio < 0.5 and areaRatio > 0.3:
+			return "Llave"
+		elif areaRatio < 0.2 and areaRatio > 0.09:			
+			xc = int(M2['m10']/M2['m00'])
+			yc = int(M2['m01']/M2['m00'])
+
+			if xc < thresh_img.shape[1]*0.5:
+				return "No doblar izquierda"
+			return "No doblar derecha"
+		elif areaRatio < 0.05 and areaRatio > 0.01:			
+			xc = int(M2['m10']/M2['m00'])
+			yc = int(M2['m01']/M2['m00'])
+
+			if xc < thresh_img.shape[1]*0.5:
+				return "Doblar izquierda"
+			return "Doblar derecha"
+			
+	return "Nada"
+
+
+
+    def detectarFlecha(self, show = False):
+	img = self.current_cv_rgb_image
+
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	gray = cv2.GaussianBlur(gray, (5,5), 0)
+	edged = cv2.Canny(gray, 75, 200)
+	
+	# find contours in the image
+	(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
+	detected = 0
+	for c in cnts:
+		peri = cv2.arcLength(c, True)
+		approx = cv2.approxPolyDP(c, 0.02*peri, True)
+		
+		if len(approx) == 4:
+			papel = approx
+			detected = 1
+			break
+	if detected:
+		x,y,w,h = cv2.boundingRect(papel)
+		cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+		M1 = cv2.moments(papel);
+		area1 = M1['m00']
+		if area1 < 10000:
+			return 0
+		thresh_img = cv2.inRange(gray, 0, 50)[y:y+h, x:x+w]
+		thresh_img = thresh_img[20:h-20,20:w-20]
+		se1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+		#thresh_img = cv2.morphologyEx(thresh_img, cv2.MORPH_CLOSE, se1)
+		thresh_img = cv2.morphologyEx(thresh_img, cv2.MORPH_OPEN, se1)
+		M2 = cv2.moments(thresh_img, 0)
+		area2 = M2['m00']/100
+		if show:
+			cv2.imshow("Lala", thresh_img)	
+			cv2.waitKey(10)
+		areaRatio = area2/area1
+		if show: print "area ratio = " + str(areaRatio)
+		if areaRatio < 0.2 and areaRatio > 0.09:			
+			xc = int(M2['m10']/M2['m00'])
+			yc = int(M2['m01']/M2['m00'])
+
+			if xc < thresh_img.shape[1]*0.5:
+				return 3 # no doblar izquierda
+			return 4 # no doblar derecha
+		elif areaRatio < 0.05 and areaRatio > 0.01:			
+			xc = int(M2['m10']/M2['m00'])
+			yc = int(M2['m01']/M2['m00'])
+
+			if xc < thresh_img.shape[1]*0.5:
+				return 1 # doblar izquierda
+			return 2 # doblar derecha
+			
+	return 0
+
+
+    def detectarLlave2(self, show = False):
+	img = self.current_cv_rgb_image
+
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	gray = cv2.GaussianBlur(gray, (5,5), 0)
+	edged = cv2.Canny(gray, 75, 200)
+	
+	# find contours in the image
+	(cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
+	detected = 0
+	for c in cnts:
+		peri = cv2.arcLength(c, True)
+		approx = cv2.approxPolyDP(c, 0.02*peri, True)
+		
+		if len(approx) == 4:
+			papel = approx
+			detected = 1
+			break
+	#print detected
+	if detected:
+		x,y,w,h = cv2.boundingRect(papel)
+		cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+		M1 = cv2.moments(papel);
+		area1 = M1['m00']
+		if area1 < 10000:
+			return 0
+		thresh_img = cv2.inRange(gray, 0, 80)[y:y+h, x:x+w]
+		thresh_img = thresh_img[20:h-20,20:w-20]
+		se1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+		#thresh_img = cv2.morphologyEx(thresh_img, cv2.MORPH_CLOSE, se1)
+		thresh_img = cv2.morphologyEx(thresh_img, cv2.MORPH_OPEN, se1)
+		M2 = cv2.moments(thresh_img, 0)
+		area2 = M2['m00']/100
+		if show:
+			cv2.imshow("Lala", thresh_img)	
+			cv2.waitKey(10)
+		areaRatio = area2/area1
+		print "area ratio = " + str(areaRatio)
+		if show: print "area ratio = " + str(areaRatio)
+		if areaRatio < 0.6 and areaRatio > 0.2:
+			return 1			
+	return 0
+	
+
+#    #def detectarLlave2(self, show = False):
+#	img = self.current_cv_rgb_image
+#	img = img[10:440,60:500,:]
+#	hsv_img = cv2.cvtColor(img,  cv2.COLOR_BGR2HSV)
+#	mask = cv2.inRange(hsv_img, (0,0,0), (255,100,50))  
+#	se1 = cv2.getStructuringElement(cv2.MORPH_RECT, (10,10))
+#	mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, se1)
+#	mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, se1)
+#	# area        
+#	mask = np.asarray(mask)
+#	B = np.argwhere(mask)
+#	if B.shape[0] == 0 or B.shape[1] == 0:
+#		return 0
+#	(ystart, xstart), (ystop, xstop) = B.min(0), B.max(0) + 1 
+#	llave = mask[ystart:ystop, xstart:xstop]
+#	#print str(xmin) + ':' + str(xmax) + ',' + str(ymin) + ':' + str(ymax)
+ #       M = cv2.moments(llave, 0)
+  #      area1 = M['m00']
+#	if show:	
+#		cv2.imshow("img", llave)
+#		cv2.waitKey(10)
+#	if (area1 > 700000):	
+#		x1 = int(M['m10']/M['m00'])
+#		y1 = int(M['m01']/M['m00'])
+#		#print str(area1) + '-' + str(x1) + '/' + str(y1)
+#		if x1 > llave.shape[1]*0.4 and x1 < llave.shape[1]*0.6 and y1 < llave.shape[0]*0.4:	    
+#			print 'Llave detectada'			
+#			return 1
+#	return 0
+
 
 

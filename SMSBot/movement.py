@@ -55,7 +55,6 @@ class MovementManager(object):
         self._navPub.publish(self._vel)
     
     def setVelX(self, vel):
-	
 	velx = vel
 	if(vel > 0.5):
 		velx = 0.5
